@@ -1,6 +1,20 @@
 [build]
   publish = "."
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/contact-leads"
+  to = "/.netlify/functions/contact-leads"
+  status = 200
+
+[[redirects]]
+  from = "/api/contact-leads/:id"
+  to = "/.netlify/functions/contact-leads/:id"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]

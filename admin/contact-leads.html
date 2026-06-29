@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>合作咨询 | DeepRank Admin</title>
+    <link rel="stylesheet" href="contact-leads.css" />
+  </head>
+  <body>
+    <main class="admin-shell">
+      <header class="admin-header">
+        <div>
+          <p>DeepRank Admin</p>
+          <h1>合作咨询</h1>
+        </div>
+        <div class="admin-header__actions">
+          <button class="admin-button admin-button--quiet" type="button" data-refresh>刷新</button>
+          <button class="admin-button admin-button--quiet" type="button" data-logout>退出</button>
+        </div>
+      </header>
+
+      <section class="token-panel" data-token-panel>
+        <div>
+          <p class="panel-kicker">Admin Access</p>
+          <h2>输入管理员令牌</h2>
+          <p>令牌来自 Netlify 环境变量 <code>ADMIN_API_TOKEN</code>。验证通过后才能查看和更新客户咨询。</p>
+        </div>
+        <form class="token-form" data-token-form>
+          <input type="password" name="token" autocomplete="current-password" placeholder="ADMIN_API_TOKEN" required />
+          <button class="admin-button" type="submit">进入后台</button>
+        </form>
+      </section>
+
+      <section class="lead-panel" data-leads-panel hidden>
+        <div class="lead-toolbar">
+          <label>
+            <span>状态筛选</span>
+            <select data-status-filter>
+              <option value="all">全部</option>
+              <option value="new">未处理</option>
+              <option value="contacted">已联系</option>
+              <option value="closed">已完成</option>
+            </select>
+          </label>
+          <p data-total-count>共 0 条</p>
+        </div>
+
+        <p class="admin-message" data-admin-message role="status" aria-live="polite"></p>
+
+        <div class="lead-table-wrap">
+          <table class="lead-table">
+            <thead>
+              <tr>
+                <th>提交时间</th>
+                <th>邮箱</th>
+                <th>姓名 / 公司</th>
+                <th>项目类型</th>
+                <th>需求描述</th>
+                <th>状态</th>
+                <th>备注</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody data-leads-body></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <script src="contact-leads.js"></script>
+  </body>
+</html>

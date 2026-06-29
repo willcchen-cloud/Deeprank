@@ -13,6 +13,16 @@
   const revealSections = [...document.querySelectorAll(".reveal")];
   const langToggle = document.querySelector(".lang-toggle");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const contactModal = document.querySelector("[data-contact-modal]");
+  const contactForm = document.querySelector("[data-contact-form]");
+  const contactFeedback = document.querySelector("[data-contact-feedback]");
+  const contactSubmit = document.querySelector("[data-contact-submit]");
+  const contactToast = document.querySelector("[data-contact-toast]");
+  const contactOpenButtons = [...document.querySelectorAll("[data-contact-open]")];
+  const contactCloseButtons = [...document.querySelectorAll("[data-contact-close]")];
+  let activeLang = "en";
+  let lastFocusedElement = null;
+  let toastTimer = 0;
 
   const i18n = {
     en: {
@@ -147,6 +157,31 @@
         name: "DeepRank Tech",
         scope: "Data Collection · Annotation · Quality Inspection · Secure Delivery",
       },
+      contact: {
+        title: "合作咨询",
+        close: "Close contact form",
+        email: "邮箱",
+        emailPlaceholder: "name@example.com",
+        nameCompany: "姓名 / 公司",
+        nameCompanyPlaceholder: "姓名或公司名称",
+        projectType: "项目类型",
+        projectPlaceholder: "请选择项目类型",
+        projectOptions: {
+          collection: "数据采集",
+          videoCleaning: "视频清洗",
+          annotation: "数据标注",
+          quality: "质量审核",
+          other: "其他",
+        },
+        message: "需求描述",
+        messagePlaceholder: "请简单描述你的数据需求、规模、交付时间或当前阶段",
+        cancel: "取消",
+        submit: "提交咨询",
+        submitting: "提交中...",
+        success: "已收到您的需求，我们会尽快联系您。",
+        validationError: "请填写邮箱、项目类型和需求描述。",
+        submitError: "提交失败，请稍后重试。",
+      },
     },
     cn: {
       meta: {
@@ -271,10 +306,36 @@
         name: "深序科技有限公司 / DeepRank Tech",
         scope: "数据采集 · 数据标注 · 质量检测 · 安全交付",
       },
+      contact: {
+        title: "合作咨询",
+        close: "关闭合作咨询",
+        email: "邮箱",
+        emailPlaceholder: "name@example.com",
+        nameCompany: "姓名 / 公司",
+        nameCompanyPlaceholder: "姓名或公司名称",
+        projectType: "项目类型",
+        projectPlaceholder: "请选择项目类型",
+        projectOptions: {
+          collection: "数据采集",
+          videoCleaning: "视频清洗",
+          annotation: "数据标注",
+          quality: "质量审核",
+          other: "其他",
+        },
+        message: "需求描述",
+        messagePlaceholder: "请简单描述你的数据需求、规模、交付时间或当前阶段",
+        cancel: "取消",
+        submit: "提交咨询",
+        submitting: "提交中...",
+        success: "已收到您的需求，我们会尽快联系您。",
+        validationError: "请填写邮箱、项目类型和需求描述。",
+        submitError: "提交失败，请稍后重试。",
+      },
     },
   };
 
   setupLanguage();
+  setupContactModal();
 
   if (!starCtx && !dustCtx) return;
 
@@ -317,10 +378,22 @@
   }
 
   function renderI18n(lang) {
+    activeLang = lang;
+
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       const value = getI18nValue(element.dataset.i18n, lang);
       const text = value == null ? "" : String(value);
       element.innerHTML = text.replace(/\n/g, "<br />");
+    });
+
+    document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+      const value = getI18nValue(element.dataset.i18nPlaceholder, lang);
+      element.setAttribute("placeholder", value == null ? "" : String(value));
+    });
+
+    document.querySelectorAll("[data-i18n-aria-label]").forEach((element) => {
+      const value = getI18nValue(element.dataset.i18nAriaLabel, lang);
+      element.setAttribute("aria-label", value == null ? "" : String(value));
     });
 
     document.documentElement.lang = lang === "cn" ? "zh-CN" : "en";
@@ -358,6 +431,132 @@
       } catch (error) {
         // Ignore storage failures; the visible language has already changed.
       }
+    });
+  }
+
+  function contactText(key) {
+    return getI18nValue(`contact.${key}`, activeLang) || getI18nValue(`contact.${key}`, "cn") || "";
+  }
+
+  function setContactFeedback(message, type = "error") {
+    if (!contactFeedback) return;
+    contactFeedback.textContent = message;
+    contactFeedback.dataset.state = message ? type : "";
+  }
+
+  function showContactToast(message) {
+    if (!contactToast) return;
+    window.clearTimeout(toastTimer);
+    contactToast.textContent = message;
+    contactToast.hidden = false;
+    contactToast.classList.add("is-visible");
+
+    toastTimer = window.setTimeout(() => {
+      contactToast.classList.remove("is-visible");
+      contactToast.hidden = true;
+    }, 3600);
+  }
+
+  function openContactModal() {
+    if (!contactModal) return;
+    lastFocusedElement = document.activeElement;
+    contactModal.hidden = false;
+    document.body.classList.add("has-contact-modal");
+    setContactFeedback("");
+
+    window.requestAnimationFrame(() => {
+      contactModal.classList.add("is-open");
+      contactForm?.querySelector("input, select, textarea, button")?.focus();
+    });
+  }
+
+  function closeContactModal() {
+    if (!contactModal) return;
+    contactModal.classList.remove("is-open");
+    document.body.classList.remove("has-contact-modal");
+
+    window.setTimeout(() => {
+      contactModal.hidden = true;
+      setContactFeedback("");
+    }, 180);
+
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+      lastFocusedElement.focus();
+    }
+  }
+
+  function isValidContactPayload(payload) {
+    const emailLike = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailLike.test(payload.email) && payload.project_type && payload.message;
+  }
+
+  async function submitContactForm(event) {
+    event.preventDefault();
+    if (!contactForm) return;
+
+    const formData = new FormData(contactForm);
+    const payload = {
+      email: String(formData.get("email") || "").trim(),
+      name_company: String(formData.get("name_company") || "").trim(),
+      project_type: String(formData.get("project_type") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+    };
+
+    if (!isValidContactPayload(payload)) {
+      setContactFeedback(contactText("validationError"));
+      return;
+    }
+
+    setContactFeedback("");
+    contactSubmit?.setAttribute("disabled", "true");
+    const submitLabel = contactSubmit?.querySelector("span");
+    const originalSubmitText = submitLabel?.textContent || contactText("submit");
+    if (submitLabel) submitLabel.textContent = contactText("submitting");
+
+    try {
+      const response = await fetch("/api/contact-leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      let result = null;
+      try {
+        result = await response.json();
+      } catch (error) {
+        result = null;
+      }
+
+      if (!response.ok) {
+        throw new Error(result?.error || contactText("submitError"));
+      }
+
+      contactForm.reset();
+      closeContactModal();
+      showContactToast(contactText("success"));
+    } catch (error) {
+      setContactFeedback(error.message || contactText("submitError"));
+    } finally {
+      contactSubmit?.removeAttribute("disabled");
+      if (submitLabel) submitLabel.textContent = originalSubmitText;
+    }
+  }
+
+  function setupContactModal() {
+    if (!contactModal || !contactForm) return;
+
+    contactOpenButtons.forEach((button) => {
+      button.addEventListener("click", openContactModal);
+    });
+
+    contactCloseButtons.forEach((button) => {
+      button.addEventListener("click", closeContactModal);
+    });
+
+    contactForm.addEventListener("submit", submitContactForm);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !contactModal.hidden) closeContactModal();
     });
   }
 
