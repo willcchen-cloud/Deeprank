@@ -17,13 +17,13 @@
   const i18n = {
     en: {
       meta: {
-        title: "DeepSequence Tech | Reliable Data for Reliable AI",
+        title: "DeepRank Tech | Reliable Data for Reliable AI",
         description:
-          "DeepSequence Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision.",
+          "DeepRank Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision.",
       },
       brand: {
-        name: "DeepSequence",
-        sub: "DeepSequence Tech",
+        name: "DeepRank",
+        sub: "DeepRank Tech",
       },
       nav: {
         about: "ABOUT",
@@ -32,10 +32,10 @@
         contact: "CONTACT",
       },
       hero: {
-        eyebrow: "DeepSequence Tech",
+        eyebrow: "DeepRank Tech",
         title: "Reliable Data\nfor Reliable AI",
         subtitle: "Reliable data infrastructure for AI",
-        body: "DeepSequence Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision.",
+        body: "DeepRank Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision.",
         cta: "Enter the Data Universe",
       },
       heroNodes: {
@@ -66,7 +66,7 @@
         kicker: "Capability Orbit",
         title: "Capabilities Across the Data Universe",
         subtitle: "Data collection, cleaning, quality inspection, annotation, and secure delivery in one production system.",
-        core: { title: "DeepSequence", sub: "Data Production System" },
+        core: { title: "DeepRank", sub: "Data Production System" },
         nodes: {
           umi: { label: "UMI Capture", zh: "", detail: "Capture hand operations, object interaction, and robot imitation learning data." },
           ego: { label: "Ego-view Capture", zh: "", detail: "Record first-person workflows, behavior traces, and scene context." },
@@ -121,7 +121,7 @@
         sectionLabel: "05 — CONFIDENTIAL DELIVERY",
         title: "Built for Confidential\nData Workflows",
         subtitle: "Verifiable delivery workflows without exposing sensitive client data.",
-        body: "Client datasets and project outputs are often protected by confidentiality agreements. DeepSequence does not display sensitive client work publicly. Instead, we make delivery quality verifiable through standardized workflows, task-level SOPs, quality records, delivery checklists, and permission-controlled handoff.",
+        body: "Client datasets and project outputs are often protected by confidentiality agreements. DeepRank does not display sensitive client work publicly. Instead, we make delivery quality verifiable through standardized workflows, task-level SOPs, quality records, delivery checklists, and permission-controlled handoff.",
         features: [
           { title: "Encryption", body: "Data protection during storage, transfer, and delivery." },
           { title: "Access Control", body: "Role-based project permissions and controlled data access." },
@@ -133,29 +133,29 @@
       },
       final: {
         sectionLabel: "06 — CONTACT",
-        title: "Build Your Next Dataset\nwith DeepSequence",
+        title: "Build Your Next Dataset\nwith DeepRank",
         subtitle: "Bring high-quality data production into a controlled, verifiable workflow.",
-        body: "If you are building robotics, embodied intelligence, multimodal models, autonomous driving, or industrial vision systems, DeepSequence can support your data workflow from collection and cleaning to annotation, quality inspection, and secure delivery.",
-        primaryCta: "Contact DeepSequence",
+        body: "If you are building robotics, embodied intelligence, multimodal models, autonomous driving, or industrial vision systems, DeepRank can support your data workflow from collection and cleaning to annotation, quality inspection, and secure delivery.",
+        primaryCta: "Contact DeepRank",
         secondaryCta: "Discuss a Data Project",
         keywords: ["Data Collection", "Annotation", "Quality Inspection", "Secure Delivery"],
-        footerBrand: "DeepSequence Tech",
+        footerBrand: "DeepRank Tech",
         footerServices: "Data Collection · Annotation · Quality Inspection · Secure Delivery",
-        copyright: "© DeepSequence Tech. 版权所有。",
+        copyright: "© DeepRank Tech. 版权所有。",
       },
       footer: {
-        name: "DeepSequence Tech",
+        name: "DeepRank Tech",
         scope: "Data Collection · Annotation · Quality Inspection · Secure Delivery",
       },
     },
     cn: {
       meta: {
-        title: "深序科技有限公司 | DeepSequence Tech",
+        title: "深序科技有限公司 | DeepRank Tech",
         description: "深序科技为智能驾驶、机器人、多模态 AI 与工业视觉提供高质量数据采集、标注、质检与安全交付服务。",
       },
       brand: {
         name: "深序科技",
-        sub: "DeepSequence Tech",
+        sub: "DeepRank Tech",
       },
       nav: {
         about: "关于我们",
@@ -265,10 +265,10 @@
         keywords: ["数据采集", "数据标注", "质量检测", "安全交付"],
         footerBrand: "深序科技有限公司",
         footerServices: "数据采集 · 数据标注 · 质量检测 · 安全交付",
-        copyright: "© DeepSequence Tech. All rights reserved.",
+        copyright: "© DeepRank Tech. All rights reserved.",
       },
       footer: {
-        name: "深序科技有限公司 / DeepSequence Tech",
+        name: "深序科技有限公司 / DeepRank Tech",
         scope: "数据采集 · 数据标注 · 质量检测 · 安全交付",
       },
     },
@@ -337,7 +337,7 @@
   }
 
   function setupLanguage() {
-    const storageKey = "deepsequence-lang";
+    const storageKey = "deeprank-lang";
     let currentLang = "en";
 
     try {
@@ -711,7 +711,7 @@
     syncAnimationState();
   });
 
-  window.__deepSequenceGalaxy = {
+  window.__deepRankGalaxy = {
     get dustCount() {
       return dust.length;
     },

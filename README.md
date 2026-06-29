@@ -1,6 +1,6 @@
-# DeepSequence Tech Static Site
+# DeepRank Tech Static Site
 
-Static website for DeepSequence Tech.
+Static website for DeepRank Tech.
 
 ## Local Preview
 
