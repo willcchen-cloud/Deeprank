@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DeepSequence Tech | Reliable Data for Reliable AI</title>
+    <meta
+      name="description"
+      content="DeepSequence Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="hero" id="hero">
+      <canvas id="starCanvas" class="star-layer" aria-hidden="true"></canvas>
+
+      <div class="hero__visual" aria-hidden="true">
+        <div class="galaxy-layer">
+          <img
+            class="galaxy-layer__image"
+            src="assets/hero-galaxy.png"
+            alt=""
+            draggable="false"
+          />
+        </div>
+        <canvas id="galaxyDustCanvas" class="galaxy-dust-canvas" aria-hidden="true"></canvas>
+        <div class="orbit-layer">
+          <span class="orbit-line orbit-line--wide"></span>
+          <span class="orbit-line orbit-line--inner"></span>
+          <span class="orbit-line orbit-line--fine"></span>
+        </div>
+        <div class="galaxy-overlay"></div>
+      </div>
+
+      <header class="site-header">
+        <a class="brand" href="#hero" aria-label="深序科技首页">
+          <span class="brand__mark" aria-hidden="true"></span>
+          <span class="brand__text">
+            <strong data-i18n="brand.name">DeepSequence</strong>
+            <small data-i18n="brand.sub">DeepSequence Tech</small>
+          </span>
+        </a>
+
+        <nav class="site-nav" aria-label="Main navigation">
+          <a href="#technology" data-i18n="nav.technology">TECHNOLOGY</a>
+          <a href="#capture-systems" data-i18n="nav.services">SERVICES</a>
+          <a href="#final-cta" data-i18n="nav.contact">CONTACT</a>
+          <button class="lang-toggle" type="button" aria-label="Switch language">CN</button>
+        </nav>
+      </header>
+
+      <section class="hero__content" aria-label="深序科技首页首屏">
+        <p class="hero__kicker" data-i18n="hero.eyebrow">DeepSequence Tech</p>
+        <h1 data-i18n="hero.title">Reliable Data<br />for Reliable AI</h1>
+        <p class="hero__subtitle" data-i18n="hero.subtitle">Reliable data infrastructure for AI</p>
+        <p class="hero__summary" data-i18n="hero.body">
+          DeepSequence Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision.
+        </p>
+        <a class="hero-cta" href="#hero">
+          <span data-i18n="hero.cta">Enter the Data Universe</span>
+          <span class="hero-cta__arrow" aria-hidden="true">→</span>
+        </a>
+      </section>
+
+      <div class="coordinate-layer" aria-label="深序科技数据生产能力坐标">
+        <button
+          class="coordinate-point coordinate-point--umi"
+          data-zone="umi"
+          type="button"
+          aria-label="UMI Capture，夹抓采集"
+        >
+          <span class="coordinate-point__dot"></span>
+          <span class="coordinate-point__line"></span>
+          <span class="coordinate-point__text">
+            <span class="coordinate-point__code">DS-01</span>
+            <span class="coordinate-point__label" data-i18n="heroNodes.umi.label">UMI Capture</span>
+            <span class="coordinate-point__zh" data-i18n="heroNodes.umi.zh"></span>
+            <span class="coordinate-point__note" data-i18n="heroNodes.umi.note">Stable grasp trajectory capture</span>
+          </span>
+        </button>
+
+        <button
+          class="coordinate-point coordinate-point--ego"
+          data-zone="ego"
+          type="button"
+          aria-label="Ego-view Capture，第一视角采集"
+        >
+          <span class="coordinate-point__dot"></span>
+          <span class="coordinate-point__line"></span>
+          <span class="coordinate-point__text">
+            <span class="coordinate-point__code">DS-22</span>
+            <span class="coordinate-point__label" data-i18n="heroNodes.ego.label">Ego-view Capture</span>
+            <span class="coordinate-point__zh" data-i18n="heroNodes.ego.zh"></span>
+            <span class="coordinate-point__note" data-i18n="heroNodes.ego.note">Context-aware operation footage</span>
+          </span>
+        </button>
+
+        <button
+          class="coordinate-point coordinate-point--cleaning"
+          data-zone="cleaning"
+          type="button"
+          aria-label="Cleaning，数据清洗"
+        >
+          <span class="coordinate-point__dot"></span>
+          <span class="coordinate-point__line"></span>
+          <span class="coordinate-point__text">
+            <span class="coordinate-point__code">DS-31</span>
+            <span class="coordinate-point__label" data-i18n="heroNodes.cleaning.label">Cleaning</span>
+            <span class="coordinate-point__zh" data-i18n="heroNodes.cleaning.zh"></span>
+            <span class="coordinate-point__note" data-i18n="heroNodes.cleaning.note">Noise removal and schema alignment</span>
+          </span>
+        </button>
+
+        <button
+          class="coordinate-point coordinate-point--qa"
+          data-zone="qa"
+          type="button"
+          aria-label="QA，质量检测"
+        >
+          <span class="coordinate-point__dot"></span>
+          <span class="coordinate-point__line"></span>
+          <span class="coordinate-point__text">
+            <span class="coordinate-point__code">DS-40</span>
+            <span class="coordinate-point__label" data-i18n="heroNodes.qa.label">QA</span>
+            <span class="coordinate-point__zh" data-i18n="heroNodes.qa.zh"></span>
+            <span class="coordinate-point__note" data-i18n="heroNodes.qa.note">Review loops and anomaly return</span>
+          </span>
+        </button>
+
+        <button
+          class="coordinate-point coordinate-point--annotation"
+          data-zone="annotation"
+          type="button"
+          aria-label="Annotation，数据标注"
+        >
+          <span class="coordinate-point__dot"></span>
+          <span class="coordinate-point__line"></span>
+          <span class="coordinate-point__text">
+            <span class="coordinate-point__code">DS-57</span>
+            <span class="coordinate-point__label" data-i18n="heroNodes.annotation.label">Annotation</span>
+            <span class="coordinate-point__zh" data-i18n="heroNodes.annotation.zh"></span>
+            <span class="coordinate-point__note" data-i18n="heroNodes.annotation.note">Semantic labels for multimodal data</span>
+          </span>
+        </button>
+
+        <button
+          class="coordinate-point coordinate-point--delivery"
+          data-zone="delivery"
+          type="button"
+          aria-label="Delivery，成品交付"
+        >
+          <span class="coordinate-point__dot"></span>
+          <span class="coordinate-point__line"></span>
+          <span class="coordinate-point__text">
+            <span class="coordinate-point__code">DS-68</span>
+            <span class="coordinate-point__label" data-i18n="heroNodes.delivery.label">Delivery</span>
+            <span class="coordinate-point__zh" data-i18n="heroNodes.delivery.zh"></span>
+            <span class="coordinate-point__note" data-i18n="heroNodes.delivery.note">Secure package and acceptance record</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="scroll-cue" aria-hidden="true">
+        <span>SCROLL</span>
+      </div>
+    </main>
+
+    <div class="page-flow">
+      <section class="page-section pipeline-section reveal" id="technology">
+        <div class="pipeline-bg" aria-hidden="true"></div>
+        <div class="pipeline-shade" aria-hidden="true"></div>
+
+        <div class="pipeline-intro">
+          <p class="pipeline-kicker" data-i18n="pipeline.kicker">02 — DATA PIPELINE</p>
+          <h2 data-i18n="pipeline.title">From Raw Capture<br />to Deliverable Dataset</h2>
+          <p class="pipeline-subtitle" data-i18n="pipeline.subtitle">
+            An integrated production workflow from task definition to validated dataset delivery.
+          </p>
+          <p class="pipeline-description" data-i18n="pipeline.body">
+            Standardized workflows, quality gates, and multi-stage validation keep every dataset ready for high-quality delivery.
+          </p>
+        </div>
+
+        <ol class="pipeline-track" aria-label="数据生产流程">
+          <li class="pipeline-node pipeline-node--one">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">01</span>
+              <strong data-i18n="pipeline.nodes.task.title">Task Definition</strong>
+              <small data-i18n="pipeline.nodes.task.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.task.note">Define goals, scenes, standards, and delivery format.</span>
+            </button>
+          </li>
+          <li class="pipeline-node pipeline-node--two">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">02</span>
+              <strong data-i18n="pipeline.nodes.protocol.title">Capture Protocol</strong>
+              <small data-i18n="pipeline.nodes.protocol.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.protocol.note">Design SOPs, device settings, capture actions, and sampling checks.</span>
+            </button>
+          </li>
+          <li class="pipeline-node pipeline-node--three">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">03</span>
+              <strong data-i18n="pipeline.nodes.field.title">Field Collection</strong>
+              <small data-i18n="pipeline.nodes.field.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.field.note">Execute UMI, ego-view, video, and multimodal capture tasks.</span>
+            </button>
+          </li>
+          <li class="pipeline-node pipeline-node--four">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">04</span>
+              <strong data-i18n="pipeline.nodes.ingestion.title">Data Ingestion</strong>
+              <small data-i18n="pipeline.nodes.ingestion.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.ingestion.note">Normalize naming, organization, backup, and version control.</span>
+            </button>
+          </li>
+          <li class="pipeline-node pipeline-node--five">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">05</span>
+              <strong data-i18n="pipeline.nodes.cleaning.title">Cleaning</strong>
+              <small data-i18n="pipeline.nodes.cleaning.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.cleaning.note">Remove abnormal, duplicate, corrupted, or low-quality records.</span>
+            </button>
+          </li>
+          <li class="pipeline-node pipeline-node--six">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">06</span>
+              <strong data-i18n="pipeline.nodes.annotation.title">Annotation</strong>
+              <small data-i18n="pipeline.nodes.annotation.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.annotation.note">Complete annotation, review, and consistency checks.</span>
+            </button>
+          </li>
+          <li class="pipeline-node pipeline-node--seven">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">07</span>
+              <strong data-i18n="pipeline.nodes.quality.title">Quality Review</strong>
+              <small data-i18n="pipeline.nodes.quality.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.quality.note">Control quality through sampling, feedback loops, and acceptance review.</span>
+            </button>
+          </li>
+          <li class="pipeline-node pipeline-node--eight">
+            <button type="button">
+              <span class="pipeline-node__ring"></span>
+              <span class="pipeline-node__index">08</span>
+              <strong data-i18n="pipeline.nodes.delivery.title">Delivery</strong>
+              <small data-i18n="pipeline.nodes.delivery.sub"></small>
+              <span class="pipeline-node__note" data-i18n="pipeline.nodes.delivery.note">Deliver datasets, annotation files, QA records, and delivery checklists.</span>
+            </button>
+          </li>
+        </ol>
+        <span class="pipeline-light" aria-hidden="true"></span>
+      </section>
+
+      <section class="page-section capture-section reveal" id="capture-systems">
+        <div class="capture-bg" aria-hidden="true"></div>
+        <div class="capture-dark" aria-hidden="true"></div>
+        <div class="capture-hover-layer" aria-hidden="true">
+          <span class="capture-glow capture-glow--umi"></span>
+          <span class="capture-glow capture-glow--ego"></span>
+          <span class="capture-scan capture-scan--umi"></span>
+          <span class="capture-scan capture-scan--ego"></span>
+          <span class="capture-timeline-dot capture-timeline-dot--one"></span>
+          <span class="capture-timeline-dot capture-timeline-dot--two"></span>
+          <span class="capture-timeline-dot capture-timeline-dot--three"></span>
+        </div>
+
+        <span class="capture-zone capture-zone--umi" aria-hidden="true"></span>
+        <span class="capture-zone capture-zone--ego" aria-hidden="true"></span>
+
+        <div class="capture-intro">
+          <p class="capture-label" data-i18n="capture.sectionLabel">03 — CAPTURE SYSTEMS</p>
+          <h2 data-i18n="capture.title">Capture Systems<br />for Embodied Intelligence</h2>
+          <p data-i18n="capture.subtitle">
+            Dedicated capture workflows for robotic manipulation, ego-view recording, and multimodal data production.
+          </p>
+        </div>
+
+        <div class="capture-overlay-panels">
+          <article class="capture-info capture-info--umi">
+            <p class="system-code">SYS-UMI</p>
+            <h3 data-i18n="capture.umi.title">UMI Gripper Capture</h3>
+            <p data-i18n="capture.umi.body">
+              Human hand-object interaction capture for robotic manipulation, imitation learning, and action sequence datasets.
+            </p>
+            <ul>
+              <li data-i18n="capture.umi.bullets.0">Hand-object interaction recording</li>
+              <li data-i18n="capture.umi.bullets.1">Gripper trajectory and motion sequence capture</li>
+              <li data-i18n="capture.umi.bullets.2">Multi-object, multi-scene task collection</li>
+              <li data-i18n="capture.umi.bullets.3">Data for robotic imitation learning</li>
+            </ul>
+          </article>
+
+          <article class="capture-info capture-info--ego">
+            <p class="system-code">SYS-EGO</p>
+            <h3 data-i18n="capture.ego.title">Ego-view Capture</h3>
+            <p data-i18n="capture.ego.body">
+              First-person task recording for human behavior, procedure context, and long-horizon multimodal understanding.
+            </p>
+            <ul>
+              <li data-i18n="capture.ego.bullets.0">First-person task process recording</li>
+              <li data-i18n="capture.ego.bullets.1">Human operation and behavior context capture</li>
+              <li data-i18n="capture.ego.bullets.2">Long-horizon, multi-scene task support</li>
+              <li data-i18n="capture.ego.bullets.3">Data for multimodal reasoning and task planning</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="page-section quality-section reveal" id="quality-layer">
+        <div class="quality-bg" aria-hidden="true"></div>
+        <div class="quality-shade" aria-hidden="true"></div>
+
+        <div class="quality-heading">
+          <p class="section-kicker" data-i18n="quality.sectionLabel">04 — QUALITY LAYER</p>
+          <h2 data-i18n="quality.title">Quality Before Scale</h2>
+          <p data-i18n="quality.subtitle">SOP, sampling, review, and feedback loops for stable data delivery.</p>
+        </div>
+
+        <div class="quality-overlay" aria-label="质量控制体系">
+          <div class="quality-engine-scene" aria-hidden="true">
+            <span class="quality-raw-cloud"></span>
+            <span class="quality-stream quality-stream--raw"></span>
+            <span class="quality-stream quality-stream--clean"></span>
+            <span class="quality-flow-dot"></span>
+
+            <div class="quality-engine-core">
+              <span class="quality-core-ring quality-core-ring--outer"></span>
+              <span class="quality-core-ring quality-core-ring--middle"></span>
+              <span class="quality-core-ring quality-core-ring--inner"></span>
+              <span class="quality-core-grid"></span>
+              <span class="quality-core-scan"></span>
+              <span class="quality-core-axis quality-core-axis--x"></span>
+              <span class="quality-core-axis quality-core-axis--y"></span>
+              <span class="quality-core-pulse"></span>
+            </div>
+
+            <div class="quality-output-cube">
+              <span class="quality-cube-face quality-cube-face--front"></span>
+              <span class="quality-cube-face quality-cube-face--top"></span>
+              <span class="quality-cube-face quality-cube-face--side"></span>
+              <span class="quality-cube-grid"></span>
+              <span class="quality-cube-glow"></span>
+            </div>
+          </div>
+
+          <button class="quality-node quality-node--one" type="button" data-step="one">
+            <span data-i18n="quality.nodes.0">01 SOP Defined</span>
+          </button>
+          <button class="quality-node quality-node--two" type="button" data-step="two">
+            <span data-i18n="quality.nodes.1">02 Sampling Enabled</span>
+          </button>
+          <button class="quality-node quality-node--three" type="button" data-step="three">
+            <span data-i18n="quality.nodes.2">03 Cleaning Applied</span>
+          </button>
+          <button class="quality-node quality-node--four" type="button" data-step="four">
+            <span data-i18n="quality.nodes.3">04 Multi-stage Review</span>
+          </button>
+          <button class="quality-node quality-node--five" type="button" data-step="five">
+            <span data-i18n="quality.nodes.4">05 Consistency Check</span>
+          </button>
+          <button class="quality-node quality-node--six" type="button" data-step="six">
+            <span data-i18n="quality.nodes.5">06 Error Feedback</span>
+          </button>
+          <button class="quality-node quality-node--seven" type="button" data-step="seven">
+            <span data-i18n="quality.nodes.6">07 Delivery Ready</span>
+          </button>
+
+          <div class="quality-core-status" aria-label="Delivery status">
+            <span data-i18n="quality.status.0">Delivery Ready</span>
+            <span data-i18n="quality.status.1">Validation Complete</span>
+            <span data-i18n="quality.status.2">Review Passed</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="page-section confidential-section reveal" id="confidential-delivery">
+        <div class="confidential-bg" aria-hidden="true"></div>
+        <div class="confidential-shade" aria-hidden="true"></div>
+        <div class="confidential-focus" aria-hidden="true"></div>
+
+        <div class="confidential-copy">
+          <p class="section-kicker" data-i18n="confidential.sectionLabel">05 — CONFIDENTIAL DELIVERY</p>
+          <h2 data-i18n="confidential.title">Built for Confidential<br />Data Workflows</h2>
+          <p class="confidential-subtitle" data-i18n="confidential.subtitle">Verifiable delivery workflows without exposing sensitive client data.</p>
+          <p class="confidential-body" data-i18n="confidential.body">
+            Client datasets and project outputs are often protected by confidentiality agreements. DeepSequence does not display sensitive client work publicly. Instead, we make delivery quality verifiable through standardized workflows, task-level SOPs, quality records, delivery checklists, and permission-controlled handoff.
+          </p>
+        </div>
+
+        <div class="confidential-features" aria-label="Confidential delivery controls">
+          <article class="confidential-feature">
+            <h3 data-i18n="confidential.features.0.title">Encryption</h3>
+            <p data-i18n="confidential.features.0.body">Data protection during storage, transfer, and delivery.</p>
+          </article>
+          <article class="confidential-feature">
+            <h3 data-i18n="confidential.features.1.title">Access Control</h3>
+            <p data-i18n="confidential.features.1.body">Role-based project permissions and controlled data access.</p>
+          </article>
+          <article class="confidential-feature">
+            <h3 data-i18n="confidential.features.2.title">Audit Trail</h3>
+            <p data-i18n="confidential.features.2.body">Delivery records, quality logs, and review history.</p>
+          </article>
+          <article class="confidential-feature">
+            <h3 data-i18n="confidential.features.3.title">Data Isolation</h3>
+            <p data-i18n="confidential.features.3.body">Project-level separation for sensitive data workflows.</p>
+          </article>
+          <article class="confidential-feature">
+            <h3 data-i18n="confidential.features.4.title">Delivery Checklist</h3>
+            <p data-i18n="confidential.features.4.body">Structured handoff with files, versions, and validation records.</p>
+          </article>
+        </div>
+
+        <ol class="confidential-flow" aria-label="Secure delivery flow">
+          <li data-i18n="confidential.flow.0">Collect</li>
+          <li data-i18n="confidential.flow.1">Process</li>
+          <li data-i18n="confidential.flow.2">Validate</li>
+          <li data-i18n="confidential.flow.3">Secure</li>
+          <li data-i18n="confidential.flow.4">Deliver</li>
+        </ol>
+      </section>
+
+      <section class="page-section final-section reveal" id="final-cta">
+        <div class="final-bg" aria-hidden="true"></div>
+        <div class="final-shade" aria-hidden="true"></div>
+
+        <div class="final-cta">
+          <p class="section-kicker" data-i18n="final.sectionLabel">06 — CONTACT</p>
+          <h2 data-i18n="final.title">Build Your Next Dataset<br />with DeepSequence</h2>
+          <p class="final-cta__subtitle" data-i18n="final.subtitle">Bring high-quality data production into a controlled, verifiable workflow.</p>
+          <p class="final-cta__body" data-i18n="final.body">
+            If you are building robotics, embodied intelligence, multimodal models, autonomous driving, or industrial vision systems, DeepSequence can support your data workflow from collection and cleaning to annotation, quality inspection, and secure delivery.
+          </p>
+          <div class="final-actions">
+            <a class="hero-cta final-button" href="mailto:contact@deepsequence.tech">
+              <span data-i18n="final.primaryCta">Contact DeepSequence</span>
+              <span class="hero-cta__arrow" aria-hidden="true">→</span>
+            </a>
+            <a class="hero-cta final-button final-button--quiet" href="mailto:contact@deepsequence.tech">
+              <span data-i18n="final.secondaryCta">Discuss a Data Project</span>
+              <span class="hero-cta__arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+
+        <ul class="final-keywords" aria-label="DeepSequence services">
+          <li data-i18n="final.keywords.0">Data Collection</li>
+          <li data-i18n="final.keywords.1">Annotation</li>
+          <li data-i18n="final.keywords.2">Quality Inspection</li>
+          <li data-i18n="final.keywords.3">Secure Delivery</li>
+        </ul>
+
+        <footer class="site-footer">
+          <div>
+            <strong data-i18n="final.footerBrand">DeepSequence Tech</strong>
+            <span data-i18n="final.footerServices">Data Collection · Annotation · Quality Inspection · Secure Delivery</span>
+          </div>
+          <small data-i18n="final.copyright">© DeepSequence Tech. All rights reserved.</small>
+        </footer>
+      </section>
+
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
