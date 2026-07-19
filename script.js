@@ -11,6 +11,11 @@
   const capabilityOrbit = document.querySelector(".capability-orbit");
   const capabilityNodes = [...document.querySelectorAll(".capability-node")];
   const revealSections = [...document.querySelectorAll(".reveal")];
+  const siteHeader = document.querySelector(".site-header");
+  const siteNav = document.querySelector("[data-mobile-menu]");
+  const mobileMenuToggle = document.querySelector("[data-mobile-menu-toggle]");
+  const mobileMenuLinks = [...(siteNav?.querySelectorAll('a[href^="#"]') || [])];
+  const mobileNavMedia = window.matchMedia("(max-width: 920px)");
   const langToggle = document.querySelector(".lang-toggle");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   const contactModal = document.querySelector("[data-contact-modal]");
@@ -20,9 +25,18 @@
   const contactToast = document.querySelector("[data-contact-toast]");
   const contactOpenButtons = [...document.querySelectorAll("[data-contact-open]")];
   const contactCloseButtons = [...document.querySelectorAll("[data-contact-close]")];
+  const modalBackgroundElements = [document.querySelector(".hero"), document.querySelector(".page-flow")].filter(Boolean);
   let activeLang = "en";
+  let mobileMenuOpen = false;
   let lastFocusedElement = null;
   let toastTimer = 0;
+  let contactCloseTimer = 0;
+  let contactOpenFrame = 0;
+  let contactModalOpen = false;
+  let modalBackgroundState = [];
+  let contactFeedbackKey = "";
+  let contactSubmitting = false;
+  let contactToastKey = "";
 
   const i18n = {
     en: {
@@ -40,6 +54,9 @@
         technology: "TECHNOLOGY",
         services: "SERVICES",
         contact: "CONTACT",
+        label: "Main navigation",
+        openMenu: "Open navigation menu",
+        closeMenu: "Close navigation menu",
       },
       hero: {
         eyebrow: "DeepRank Tech",
@@ -151,36 +168,37 @@
         keywords: ["Data Collection", "Annotation", "Quality Inspection", "Secure Delivery"],
         footerBrand: "DeepRank Tech",
         footerServices: "Data Collection · Annotation · Quality Inspection · Secure Delivery",
-        copyright: "© DeepRank Tech. 版权所有。",
+        copyright: "© DeepRank Tech. All rights reserved.",
       },
       footer: {
         name: "DeepRank Tech",
         scope: "Data Collection · Annotation · Quality Inspection · Secure Delivery",
       },
       contact: {
-        title: "合作咨询",
+        kicker: "DeepRank Contact",
+        title: "Partnership Inquiry",
         close: "Close contact form",
-        email: "邮箱",
+        email: "Email",
         emailPlaceholder: "name@example.com",
-        nameCompany: "姓名 / 公司",
-        nameCompanyPlaceholder: "姓名或公司名称",
-        projectType: "项目类型",
-        projectPlaceholder: "请选择项目类型",
+        nameCompany: "Name / Company",
+        nameCompanyPlaceholder: "Name or company name",
+        projectType: "Project Type",
+        projectPlaceholder: "Select a project type",
         projectOptions: {
-          collection: "数据采集",
-          videoCleaning: "视频清洗",
-          annotation: "数据标注",
-          quality: "质量审核",
-          other: "其他",
+          collection: "Data Collection",
+          videoCleaning: "Video Cleaning",
+          annotation: "Data Annotation",
+          quality: "Quality Review",
+          other: "Other",
         },
-        message: "需求描述",
-        messagePlaceholder: "请简单描述你的数据需求、规模、交付时间或当前阶段",
-        cancel: "取消",
-        submit: "提交咨询",
-        submitting: "提交中...",
-        success: "已收到您的需求，我们会尽快联系您。",
-        validationError: "请填写邮箱、项目类型和需求描述。",
-        submitError: "提交失败，请稍后重试。",
+        message: "Requirements",
+        messagePlaceholder: "Describe your data needs, scale, delivery timeline, or current stage",
+        cancel: "Cancel",
+        submit: "Submit Inquiry",
+        submitting: "Submitting...",
+        success: "We have received your inquiry and will contact you shortly.",
+        validationError: "Please enter a valid email and provide the project type and requirements.",
+        submitError: "Submission failed. Please try again later.",
       },
     },
     cn: {
@@ -197,6 +215,9 @@
         technology: "技术能力",
         services: "服务内容",
         contact: "联系我们",
+        label: "主导航",
+        openMenu: "打开导航菜单",
+        closeMenu: "关闭导航菜单",
       },
       hero: {
         eyebrow: "深序科技",
@@ -300,13 +321,14 @@
         keywords: ["数据采集", "数据标注", "质量检测", "安全交付"],
         footerBrand: "深序科技有限公司",
         footerServices: "数据采集 · 数据标注 · 质量检测 · 安全交付",
-        copyright: "© DeepRank Tech. All rights reserved.",
+        copyright: "© DeepRank Tech. 版权所有。",
       },
       footer: {
         name: "深序科技有限公司 / DeepRank Tech",
         scope: "数据采集 · 数据标注 · 质量检测 · 安全交付",
       },
       contact: {
+        kicker: "深序科技合作联系",
         title: "合作咨询",
         close: "关闭合作咨询",
         email: "邮箱",
@@ -335,6 +357,7 @@
   };
 
   setupLanguage();
+  setupMobileMenu();
   setupContactModal();
 
   if (!starCtx && !dustCtx) return;
@@ -345,9 +368,13 @@
   let frame = 0;
   let running = false;
   let lastTime = 0;
+  let canvasReady = false;
   let stars = [];
   let dust = [];
   let flows = [];
+  let resizeTimer = 0;
+  let resizeCommitCount = 0;
+  let particleRebuildCount = 0;
 
   const pointer = {
     x: 0.5,
@@ -369,6 +396,12 @@
   const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
   const lerp = (a, b, n) => a + (b - a) * n;
   const rand = (min, max) => min + Math.random() * (max - min);
+  const finiteOr = (value, fallback = 0) => (Number.isFinite(value) ? value : fallback);
+  const isFinitePoint = (point) => Boolean(point && Number.isFinite(point.x) && Number.isFinite(point.y));
+
+  function hasDrawableCanvas() {
+    return canvasReady && Number.isFinite(width) && width > 0 && Number.isFinite(height) && height > 0;
+  }
 
   function getI18nValue(path, lang) {
     return path.split(".").reduce((value, key) => {
@@ -407,6 +440,8 @@
       langToggle.textContent = nextLang.toUpperCase();
       langToggle.setAttribute("aria-label", lang === "en" ? "Switch to Chinese" : "切换到英文");
     }
+
+    renderRuntimeI18n();
   }
 
   function setupLanguage() {
@@ -434,48 +469,186 @@
     });
   }
 
+  function syncMobileMenuState() {
+    if (!siteNav || !mobileMenuToggle) return;
+
+    const isMobile = mobileNavMedia.matches;
+    if (!isMobile) mobileMenuOpen = false;
+    const isOpen = isMobile && mobileMenuOpen;
+
+    siteHeader?.classList.toggle("is-menu-open", isOpen);
+    siteNav.classList.toggle("is-open", isOpen);
+    mobileMenuToggle.setAttribute("aria-expanded", String(isOpen));
+    mobileMenuToggle.setAttribute("aria-label", getI18nValue(`nav.${isOpen ? "closeMenu" : "openMenu"}`, activeLang));
+
+    if (isMobile) {
+      siteNav.setAttribute("aria-hidden", String(!isOpen));
+      siteNav.inert = !isOpen;
+    } else {
+      siteNav.removeAttribute("aria-hidden");
+      siteNav.inert = false;
+    }
+  }
+
+  function setMobileMenu(open, restoreFocus = false) {
+    const nextOpen = Boolean(open && mobileNavMedia.matches);
+    if (!nextOpen && (restoreFocus || siteNav?.contains(document.activeElement))) {
+      mobileMenuToggle?.focus();
+    }
+
+    mobileMenuOpen = nextOpen;
+    syncMobileMenuState();
+  }
+
+  function setupMobileMenu() {
+    if (!siteHeader || !siteNav || !mobileMenuToggle) return;
+
+    mobileMenuToggle.addEventListener("click", () => setMobileMenu(!mobileMenuOpen));
+    mobileMenuLinks.forEach((link) => link.addEventListener("click", () => setMobileMenu(false)));
+    langToggle?.addEventListener("click", () => setMobileMenu(false));
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape" || !mobileMenuOpen) return;
+      event.preventDefault();
+      setMobileMenu(false, true);
+    });
+
+    document.addEventListener("pointerdown", (event) => {
+      if (mobileMenuOpen && !siteHeader.contains(event.target)) setMobileMenu(false);
+    });
+
+    mobileNavMedia.addEventListener("change", (event) => {
+      if (event.matches) setMobileMenu(false);
+      else {
+        mobileMenuOpen = false;
+        syncMobileMenuState();
+      }
+    });
+    syncMobileMenuState();
+  }
+
   function contactText(key) {
-    return getI18nValue(`contact.${key}`, activeLang) || getI18nValue(`contact.${key}`, "cn") || "";
+    const value = getI18nValue(`contact.${key}`, activeLang);
+    return value == null ? "" : String(value);
   }
 
-  function setContactFeedback(message, type = "error") {
+  function renderRuntimeI18n() {
+    syncMobileMenuState();
+
+    if (contactFeedback) {
+      contactFeedback.textContent = contactFeedbackKey ? contactText(contactFeedbackKey) : "";
+    }
+
+    const submitLabel = contactSubmit?.querySelector("span");
+    if (submitLabel) submitLabel.textContent = contactText(contactSubmitting ? "submitting" : "submit");
+
+    if (contactToastKey && contactToast && !contactToast.hidden) {
+      contactToast.textContent = contactText(contactToastKey);
+    }
+  }
+
+  function setContactFeedback(key, type = "error") {
     if (!contactFeedback) return;
-    contactFeedback.textContent = message;
-    contactFeedback.dataset.state = message ? type : "";
+    contactFeedbackKey = key;
+    contactFeedback.textContent = key ? contactText(key) : "";
+    contactFeedback.dataset.state = key ? type : "";
   }
 
-  function showContactToast(message) {
+  function showContactToast(key) {
     if (!contactToast) return;
     window.clearTimeout(toastTimer);
-    contactToast.textContent = message;
+    contactToastKey = key;
+    contactToast.textContent = contactText(key);
     contactToast.hidden = false;
     contactToast.classList.add("is-visible");
 
     toastTimer = window.setTimeout(() => {
       contactToast.classList.remove("is-visible");
       contactToast.hidden = true;
+      contactToastKey = "";
     }, 3600);
   }
 
-  function openContactModal() {
+  function disableModalBackground() {
+    if (modalBackgroundState.length) return;
+
+    modalBackgroundState = modalBackgroundElements.map((element) => ({
+      element,
+      hadInert: element.hasAttribute("inert"),
+      ariaHidden: element.getAttribute("aria-hidden"),
+    }));
+
+    modalBackgroundState.forEach(({ element }) => {
+      element.inert = true;
+      element.setAttribute("aria-hidden", "true");
+    });
+  }
+
+  function restoreModalBackground() {
+    modalBackgroundState.forEach(({ element, hadInert, ariaHidden }) => {
+      element.inert = hadInert;
+      if (ariaHidden == null) element.removeAttribute("aria-hidden");
+      else element.setAttribute("aria-hidden", ariaHidden);
+    });
+    modalBackgroundState = [];
+  }
+
+  function getModalFocusableElements() {
+    if (!contactModal) return [];
+    const selector = [
+      'a[href]',
+      'button:not([disabled])',
+      'input:not([disabled])',
+      'select:not([disabled])',
+      'textarea:not([disabled])',
+      '[tabindex]:not([tabindex="-1"])',
+    ].join(",");
+
+    return [...contactModal.querySelectorAll(selector)].filter(
+      (element) => !element.hidden && element.getClientRects().length > 0,
+    );
+  }
+
+  function openContactModal(event) {
     if (!contactModal) return;
-    lastFocusedElement = document.activeElement;
+    window.clearTimeout(contactCloseTimer);
+    contactCloseTimer = 0;
+    if (contactOpenFrame) window.cancelAnimationFrame(contactOpenFrame);
+
+    if (!contactModalOpen) lastFocusedElement = event?.currentTarget || document.activeElement;
+    contactModalOpen = true;
     contactModal.hidden = false;
+    contactModal.inert = false;
+    contactModal.setAttribute("aria-hidden", "false");
+    disableModalBackground();
     document.body.classList.add("has-contact-modal");
     setContactFeedback("");
 
-    window.requestAnimationFrame(() => {
+    contactOpenFrame = window.requestAnimationFrame(() => {
+      contactOpenFrame = 0;
+      if (!contactModalOpen || contactModal.hidden) return;
       contactModal.classList.add("is-open");
       contactForm?.querySelector("input, select, textarea, button")?.focus();
     });
   }
 
   function closeContactModal() {
-    if (!contactModal) return;
+    if (!contactModal || (!contactModalOpen && contactModal.hidden)) return;
+    contactModalOpen = false;
+    if (contactOpenFrame) {
+      window.cancelAnimationFrame(contactOpenFrame);
+      contactOpenFrame = 0;
+    }
     contactModal.classList.remove("is-open");
+    contactModal.setAttribute("aria-hidden", "true");
+    contactModal.inert = true;
     document.body.classList.remove("has-contact-modal");
+    restoreModalBackground();
 
-    window.setTimeout(() => {
+    window.clearTimeout(contactCloseTimer);
+    contactCloseTimer = window.setTimeout(() => {
+      contactCloseTimer = 0;
+      if (contactModalOpen || contactModal.classList.contains("is-open")) return;
       contactModal.hidden = true;
       setContactFeedback("");
     }, 180);
@@ -503,15 +676,15 @@
     };
 
     if (!isValidContactPayload(payload)) {
-      setContactFeedback(contactText("validationError"));
+      setContactFeedback("validationError");
       return;
     }
 
     setContactFeedback("");
+    contactSubmitting = true;
     contactSubmit?.setAttribute("disabled", "true");
-    const submitLabel = contactSubmit?.querySelector("span");
-    const originalSubmitText = submitLabel?.textContent || contactText("submit");
-    if (submitLabel) submitLabel.textContent = contactText("submitting");
+    contactForm.setAttribute("aria-busy", "true");
+    renderRuntimeI18n();
 
     try {
       const response = await fetch("/api/contact-leads", {
@@ -520,25 +693,20 @@
         body: JSON.stringify(payload),
       });
 
-      let result = null;
-      try {
-        result = await response.json();
-      } catch (error) {
-        result = null;
-      }
-
       if (!response.ok) {
-        throw new Error(result?.error || contactText("submitError"));
+        throw new Error(contactText("submitError"));
       }
 
       contactForm.reset();
       closeContactModal();
-      showContactToast(contactText("success"));
+      showContactToast("success");
     } catch (error) {
-      setContactFeedback(error.message || contactText("submitError"));
+      setContactFeedback("submitError");
     } finally {
+      contactSubmitting = false;
       contactSubmit?.removeAttribute("disabled");
-      if (submitLabel) submitLabel.textContent = originalSubmitText;
+      contactForm.removeAttribute("aria-busy");
+      renderRuntimeI18n();
     }
   }
 
@@ -556,25 +724,99 @@
     contactForm.addEventListener("submit", submitContactForm);
 
     document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && !contactModal.hidden) closeContactModal();
+      if (!contactModalOpen) return;
+
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeContactModal();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+      const focusable = getModalFocusableElements();
+      if (!focusable.length) {
+        event.preventDefault();
+        contactModal.querySelector('[role="dialog"]')?.focus();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const activeElement = document.activeElement;
+      if (!contactModal.contains(activeElement) || !focusable.includes(activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first).focus();
+      } else if (event.shiftKey && activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     });
   }
 
   function sizeCanvas(canvas, ctx) {
     if (!canvas || !ctx) return;
-    canvas.width = Math.floor(width * dpr);
-    canvas.height = Math.floor(height * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    canvas.width = canvasReady ? Math.max(1, Math.floor(width * dpr)) : 0;
+    canvas.height = canvasReady ? Math.max(1, Math.floor(height * dpr)) : 0;
+    if (canvasReady) ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function readCanvasMetrics() {
+    const canvas = starCanvas || dustCanvas;
+    if (!canvas) return null;
+
+    const rect = canvas.getBoundingClientRect();
+    const nextWidth = Number.isFinite(rect.width) ? Math.max(0, Math.floor(rect.width)) : 0;
+    const nextHeight = Number.isFinite(rect.height) ? Math.max(0, Math.floor(rect.height)) : 0;
+    const devicePixelRatio = Number(window.devicePixelRatio);
+    const nextDpr = Number.isFinite(devicePixelRatio) && devicePixelRatio > 0 ? Math.min(devicePixelRatio, 1.5) : 1;
+    const ready = nextWidth > 0 && nextHeight > 0;
+
+    return {
+      width: nextWidth,
+      height: nextHeight,
+      dpr: nextDpr,
+      ready,
+      pixelWidth: ready ? Math.max(1, Math.floor(nextWidth * nextDpr)) : 0,
+      pixelHeight: ready ? Math.max(1, Math.floor(nextHeight * nextDpr)) : 0,
+    };
+  }
+
+  function canvasPixelsMatch(canvas, ctx, metrics) {
+    return !canvas || !ctx || (canvas.width === metrics.pixelWidth && canvas.height === metrics.pixelHeight);
   }
 
   function resize() {
-    const rect = (starCanvas || dustCanvas).getBoundingClientRect();
-    width = Math.max(1, Math.floor(rect.width));
-    height = Math.max(1, Math.floor(rect.height));
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    const metrics = readCanvasMetrics();
+    if (!metrics) return false;
+    const metricsChanged =
+      width !== metrics.width ||
+      height !== metrics.height ||
+      dpr !== metrics.dpr ||
+      canvasReady !== metrics.ready ||
+      !canvasPixelsMatch(starCanvas, starCtx, metrics) ||
+      !canvasPixelsMatch(dustCanvas, dustCtx, metrics);
+
+    if (!metricsChanged) return false;
+
+    width = metrics.width;
+    height = metrics.height;
+    dpr = metrics.dpr;
+    canvasReady = metrics.ready;
+    resizeCommitCount += 1;
 
     sizeCanvas(starCanvas, starCtx);
     sizeCanvas(dustCanvas, dustCtx);
+
+    if (!canvasReady) {
+      stars = [];
+      dust = [];
+      flows = [];
+      stopAnimation(true);
+      return true;
+    }
 
     const mobile = width < 680;
     const tablet = width < 980;
@@ -584,6 +826,8 @@
 
     createStars();
     createDust();
+    particleRebuildCount += 1;
+    return true;
   }
 
   function createStars() {
@@ -657,28 +901,35 @@
       alpha: rand(0.16, 0.34),
       width: rand(0.38, 0.76),
       phase: rand(0, Math.PI * 2),
+      depth: 1,
+      wobble: 0,
+      wobbleSpeed: 0,
     };
   }
 
   function projectParticle(item, time, angleOffset = 0, radiusOffset = 0) {
-    const radiusNorm = clamp(item.radiusNorm + radiusOffset, 0.04, 1.08);
-    const theta = item.angle + item.armOffset + radiusNorm * galaxy.spiral + angleOffset;
+    const radiusNorm = clamp(finiteOr(item.radiusNorm) + finiteOr(radiusOffset), 0.04, 1.08);
+    const theta = finiteOr(item.angle) + finiteOr(item.armOffset) + radiusNorm * galaxy.spiral + finiteOr(angleOffset);
     const radius = radiusNorm * galaxy.radius;
-    const wobble = Math.sin(time * item.wobbleSpeed + item.phase) * (item.wobble || 0);
+    const wobble = Math.sin(finiteOr(time) * finiteOr(item.wobbleSpeed) + finiteOr(item.phase)) * finiteOr(item.wobble);
     const rawX = Math.cos(theta) * radius + wobble;
     const rawY = Math.sin(theta) * radius * galaxy.flatten + wobble * 0.28;
     const cos = Math.cos(galaxy.tilt);
     const sin = Math.sin(galaxy.tilt);
-    const mx = (pointer.x - 0.5) * 8 * (item.depth || 1);
-    const my = (pointer.y - 0.5) * 5 * (item.depth || 1);
+    const depth = finiteOr(item.depth, 1);
+    const mx = (pointer.x - 0.5) * 8 * depth;
+    const my = (pointer.y - 0.5) * 5 * depth;
 
-    return {
+    const point = {
       x: galaxy.centerX + rawX * cos - rawY * sin + mx,
       y: galaxy.centerY + rawX * sin + rawY * cos + my,
     };
+
+    return isFinitePoint(point) ? point : null;
   }
 
   function edgeFade(x, y) {
+    if (!hasDrawableCanvas() || !Number.isFinite(x) || !Number.isFinite(y)) return 0;
     const left = clamp((x - width * 0.36) / (width * 0.2), 0, 1);
     const top = clamp((y - height * 0.04) / (height * 0.14), 0, 1);
     const bottom = clamp((height * 0.96 - y) / (height * 0.14), 0, 1);
@@ -687,18 +938,20 @@
   }
 
   function drawStarLayer(time) {
-    if (!starCtx) return;
+    if (!starCtx || !hasDrawableCanvas()) return;
     starCtx.clearRect(0, 0, width, height);
 
+    const safeTime = finiteOr(time);
     const mx = pointer.x - 0.5;
     const my = pointer.y - 0.5;
 
     stars.forEach((star) => {
-      const drift = Math.sin(time * 0.00018 + star.phase) * 2.2;
+      const drift = Math.sin(safeTime * 0.00018 + finiteOr(star.phase)) * 2.2;
       const x = star.x * width + mx * 44 * star.depth + drift;
       const y = star.y * height + my * 28 * star.depth + drift * 0.4;
-      const pulse = 0.72 + Math.sin(time * 0.001 + star.phase) * 0.28;
+      const pulse = 0.72 + Math.sin(safeTime * 0.001 + finiteOr(star.phase)) * 0.28;
       const alpha = clamp(star.alpha * pulse, 0.015, 0.24);
+      if (![x, y, star.radius, alpha].every(Number.isFinite) || star.radius <= 0) return;
 
       starCtx.beginPath();
       starCtx.fillStyle = `rgba(${star.hue},${alpha})`;
@@ -706,31 +959,37 @@
       starCtx.fill();
 
       if (star.radius > 0.9 && alpha > 0.08) {
-        const glow = starCtx.createRadialGradient(x, y, 0, x, y, star.radius * 6);
+        const glowRadius = star.radius * 6;
+        if (!Number.isFinite(glowRadius) || glowRadius <= 0) return;
+        const glow = starCtx.createRadialGradient(x, y, 0, x, y, glowRadius);
         glow.addColorStop(0, `rgba(${star.hue},${alpha * 0.24})`);
         glow.addColorStop(1, `rgba(${star.hue},0)`);
         starCtx.fillStyle = glow;
         starCtx.beginPath();
-        starCtx.arc(x, y, star.radius * 6, 0, Math.PI * 2);
+        starCtx.arc(x, y, glowRadius, 0, Math.PI * 2);
         starCtx.fill();
       }
     });
   }
 
   function drawDustLayer(time, delta) {
-    if (!dustCtx) return;
+    if (!dustCtx || !hasDrawableCanvas()) return;
     dustCtx.clearRect(0, 0, width, height);
     dustCtx.save();
     dustCtx.globalCompositeOperation = "screen";
+    const safeTime = finiteOr(time);
+    const safeDelta = clamp(finiteOr(delta, 1), 0.2, 2.2);
 
     dust.forEach((particle) => {
-      particle.angle += particle.speed * delta;
-      const p = projectParticle(particle, time);
+      particle.angle = finiteOr(particle.angle) + finiteOr(particle.speed) * safeDelta;
+      const p = projectParticle(particle, safeTime);
+      if (!isFinitePoint(p)) return;
       const fade = edgeFade(p.x, p.y);
       if (fade <= 0.01) return;
 
-      const shimmer = 0.82 + Math.sin(time * 0.00042 + particle.phase) * 0.18;
+      const shimmer = 0.82 + Math.sin(safeTime * 0.00042 + finiteOr(particle.phase)) * 0.18;
       const alpha = clamp(particle.alpha * shimmer * fade, 0.02, 0.45);
+      if (!Number.isFinite(particle.size) || particle.size <= 0 || !Number.isFinite(alpha)) return;
 
       dustCtx.fillStyle = `rgba(${particle.hue},${alpha})`;
       dustCtx.beginPath();
@@ -739,13 +998,14 @@
     });
 
     flows.forEach((flow, index) => {
+      flow.wait = finiteOr(flow.wait);
       if (flow.wait > 0) {
-        flow.wait -= delta;
+        flow.wait -= safeDelta;
         return;
       }
 
-      flow.angle += flow.speed * delta;
-      flow.life += flow.lifeSpeed * delta;
+      flow.angle = finiteOr(flow.angle) + finiteOr(flow.speed) * safeDelta;
+      flow.life = finiteOr(flow.life) + finiteOr(flow.lifeSpeed) * safeDelta;
 
       if (flow.life >= 1) {
         flows[index] = createFlow(false);
@@ -760,22 +1020,26 @@
 
       for (let i = 0; i < 6; i += 1) {
         const trail = i / 5;
-        points.push(projectParticle(flow, time, -flow.length * trail, -trail * 0.012));
+        points.push(projectParticle(flow, safeTime, -finiteOr(flow.length) * trail, -trail * 0.012));
       }
+
+      if (!points.every(isFinitePoint)) return;
 
       const head = points[0];
       const tail = points[points.length - 1];
       const mask = edgeFade(head.x, head.y) * edgeFade(tail.x, tail.y);
-      if (mask <= 0.01) return;
+      if (!Number.isFinite(mask) || mask <= 0.01) return;
 
       const alpha = flow.alpha * fade * mask;
+      const gradientCoordinates = [head.x, head.y, tail.x, tail.y];
+      if (!Number.isFinite(alpha) || !gradientCoordinates.every(Number.isFinite)) return;
       const gradient = dustCtx.createLinearGradient(head.x, head.y, tail.x, tail.y);
       gradient.addColorStop(0, `rgba(242,248,252,${alpha})`);
       gradient.addColorStop(0.4, `rgba(174,204,226,${alpha * 0.52})`);
       gradient.addColorStop(1, "rgba(174,204,226,0)");
 
       dustCtx.strokeStyle = gradient;
-      dustCtx.lineWidth = flow.width;
+      dustCtx.lineWidth = Math.max(0.1, finiteOr(flow.width, 0.5));
       dustCtx.beginPath();
       points.forEach((point, pointIndex) => {
         if (pointIndex === 0) dustCtx.moveTo(point.x, point.y);
@@ -794,9 +1058,16 @@
 
   function animate(time = 0) {
     if (!running) return;
+    frame = 0;
+    if (!hasDrawableCanvas()) {
+      stopAnimation();
+      return;
+    }
 
-    const delta = lastTime ? clamp((time - lastTime) / 16.67, 0.2, 2.2) : 1;
-    lastTime = time;
+    const safeTime = finiteOr(time, lastTime || 0);
+    const elapsed = lastTime ? (safeTime - lastTime) / 16.67 : 1;
+    const delta = clamp(finiteOr(elapsed, 1), 0.2, 2.2);
+    lastTime = safeTime;
 
     pointer.x = lerp(pointer.x, pointer.tx, 0.065);
     pointer.y = lerp(pointer.y, pointer.ty, 0.065);
@@ -804,14 +1075,14 @@
     root.style.setProperty("--mx", (pointer.x - 0.5).toFixed(4));
     root.style.setProperty("--my", (pointer.y - 0.5).toFixed(4));
 
-    drawStarLayer(time);
-    drawDustLayer(time, delta);
+    drawStarLayer(safeTime);
+    drawDustLayer(safeTime, delta);
 
     frame = requestAnimationFrame(animate);
   }
 
   function startAnimation() {
-    if (running || reducedMotion.matches || document.hidden) return;
+    if (running || !hasDrawableCanvas() || reducedMotion.matches || document.hidden) return;
     running = true;
     lastTime = 0;
     frame = requestAnimationFrame(animate);
@@ -819,7 +1090,8 @@
 
   function stopAnimation(shouldClear = false) {
     running = false;
-    cancelAnimationFrame(frame);
+    if (frame) cancelAnimationFrame(frame);
+    frame = 0;
     if (shouldClear) clearCanvases();
   }
 
@@ -833,6 +1105,7 @@
   }
 
   function updatePointer(event) {
+    if (!hasDrawableCanvas() || !Number.isFinite(event.clientX) || !Number.isFinite(event.clientY)) return;
     pointer.tx = clamp(event.clientX / width, 0, 1);
     pointer.ty = clamp(event.clientY / height, 0, 1);
   }
@@ -902,13 +1175,37 @@
     revealSections.forEach((section) => observer.observe(section));
   }
 
-  window.addEventListener("resize", resize, { passive: true });
-  window.addEventListener("pointermove", updatePointer, { passive: true });
-  document.addEventListener("visibilitychange", syncAnimationState);
-  reducedMotion.addEventListener("change", () => {
+  function handleResize() {
+    if (document.hidden || resizeTimer) return;
+    resizeTimer = window.setTimeout(() => {
+      resizeTimer = 0;
+      if (document.hidden) return;
+      resize();
+      syncAnimationState();
+    }, 80);
+  }
+
+  function handleVisibilityChange() {
+    if (document.hidden) {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = 0;
+      stopAnimation();
+      return;
+    }
+
     resize();
     syncAnimationState();
-  });
+  }
+
+  function handleReducedMotionChange() {
+    resize();
+    syncAnimationState();
+  }
+
+  window.addEventListener("resize", handleResize, { passive: true });
+  window.addEventListener("pointermove", updatePointer, { passive: true });
+  document.addEventListener("visibilitychange", handleVisibilityChange);
+  reducedMotion.addEventListener("change", handleReducedMotionChange);
 
   window.__deepRankGalaxy = {
     get dustCount() {
@@ -919,6 +1216,18 @@
     },
     get running() {
       return running;
+    },
+    get canvasReady() {
+      return canvasReady;
+    },
+    get resizeCommitCount() {
+      return resizeCommitCount;
+    },
+    get particleRebuildCount() {
+      return particleRebuildCount;
+    },
+    get metrics() {
+      return { width, height, dpr };
     },
   };
 

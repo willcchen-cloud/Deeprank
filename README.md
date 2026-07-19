@@ -4,16 +4,22 @@ Static website for DeepRank Tech.
 
 ## Local Preview
 
-Open `index.html` directly in a browser, or serve the folder with any static file server.
+Run `npm run build` to create the whitelisted static site in `dist`.
 
 ## Netlify
 
 This repository is ready for Netlify import.
 
-- Build command: leave empty
-- Publish directory: `.`
+- Build command: `npm run build`
+- Publish directory: `dist`
 
 The same settings are also included in `netlify.toml`.
+
+## Contact Channel
+
+- 企业邮箱尚未正式配置。
+- 当前官网仅通过联系表单接收咨询。
+- 将来确认企业邮箱后才能恢复公开邮箱入口。
 
 ## Contact Lead Backend
 

@@ -278,6 +278,10 @@ button {
   gap: 34px;
 }
 
+.mobile-menu-toggle {
+  display: none;
+}
+
 .site-nav a {
   position: relative;
   color: rgba(238, 243, 246, 0.54);
@@ -301,11 +305,13 @@ button {
   transition: opacity 180ms ease;
 }
 
-.site-nav a:hover {
+.site-nav a:hover,
+.site-nav a:focus-visible {
   color: rgba(238, 243, 246, 0.88);
 }
 
-.site-nav a:hover::after {
+.site-nav a:hover::after,
+.site-nav a:focus-visible::after {
   opacity: 0.42;
 }
 
@@ -2546,6 +2552,12 @@ body.has-contact-modal {
   overflow: hidden;
 }
 
+.hero[inert],
+.page-flow[inert] {
+  pointer-events: none;
+  user-select: none;
+}
+
 .contact-modal[hidden],
 .contact-toast[hidden] {
   display: none;
@@ -2882,12 +2894,96 @@ body.has-contact-modal {
   }
 
   .site-nav {
+    position: absolute;
+    top: 76px;
+    right: 24px;
     display: flex;
+    width: min(264px, calc(100vw - 48px));
+    border: 1px solid rgba(238, 243, 246, 0.14);
+    border-radius: 8px;
+    padding: 8px;
+    align-items: stretch;
+    flex-direction: column;
     gap: 0;
+    background: rgba(5, 9, 16, 0.94);
+    box-shadow: 0 20px 54px rgba(0, 0, 0, 0.38);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(-8px);
+    transition: opacity 180ms ease, transform 180ms ease, visibility 0s linear 180ms;
+    backdrop-filter: blur(14px);
   }
 
   .site-nav a {
+    display: flex;
+    min-height: 44px;
+    padding: 0 12px;
+    border-bottom: 1px solid rgba(238, 243, 246, 0.08);
+    align-items: center;
+    color: rgba(238, 243, 246, 0.72);
+    font-size: 12px;
+  }
+
+  .site-nav a::after {
     display: none;
+  }
+
+  .site-nav.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+    transition-delay: 0s;
+  }
+
+  .site-nav .lang-toggle {
+    width: 100%;
+    min-height: 44px;
+    margin: 4px 0 0;
+    border-radius: 6px;
+  }
+
+  .mobile-menu-toggle {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    width: 42px;
+    height: 42px;
+    border: 1px solid rgba(238, 243, 246, 0.18);
+    border-radius: 50%;
+    place-content: center;
+    gap: 4px;
+    color: rgba(238, 243, 246, 0.82);
+    background: rgba(5, 9, 16, 0.28);
+    cursor: pointer;
+    transition: border-color 180ms ease, background 180ms ease;
+  }
+
+  .mobile-menu-toggle:hover,
+  .mobile-menu-toggle:focus-visible {
+    border-color: rgba(238, 243, 246, 0.42);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .mobile-menu-toggle span {
+    display: block;
+    width: 16px;
+    height: 1px;
+    background: currentColor;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] span:nth-child(1) {
+    transform: translateY(5px) rotate(45deg);
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-toggle[aria-expanded="true"] span:nth-child(3) {
+    transform: translateY(-5px) rotate(-45deg);
   }
 
   .galaxy-layer {
@@ -3249,7 +3345,7 @@ body.has-contact-modal {
   .final-keywords {
     left: 24px;
     right: 24px;
-    bottom: 112px;
+    bottom: 160px;
     flex-wrap: wrap;
   }
 
@@ -3289,6 +3385,12 @@ body.has-contact-modal {
 
   .site-header {
     padding: 19px 18px;
+  }
+
+  .site-nav {
+    top: 67px;
+    right: 18px;
+    width: min(264px, calc(100vw - 36px));
   }
 
   .brand__mark {
@@ -3724,7 +3826,7 @@ body.has-contact-modal {
   .final-keywords {
     left: 18px;
     right: 18px;
-    bottom: 110px;
+    bottom: 150px;
     flex-wrap: wrap;
     gap: 10px 16px;
     font-size: 10px;
