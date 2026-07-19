@@ -41,12 +41,13 @@ async function expectMenuClosed(page) {
 test("desktop CTA, modal state, focus loop, language, and console remain correct", async ({ page }) => {
   const { errors, requests } = await instrumentPage(page, { width: 1280, height: 720 });
 
-  await page.locator('.hero-cta[href="#capture-systems"]').click();
-  await expect(page).toHaveURL(/#capture-systems$/);
+  await expect(page.locator("[data-contact-open]")).toHaveCount(1);
+  await page.locator('.hero-cta[href="#technology"]').click();
+  await expect(page).toHaveURL(/#technology$/);
   await expect
-    .poll(() => page.locator("#capture-systems").evaluate((element) => element.getBoundingClientRect().top))
+    .poll(() => page.locator("#technology").evaluate((element) => element.getBoundingClientRect().top))
     .toBeLessThan(720);
-  const targetPosition = await page.locator("#capture-systems").evaluate((element) => ({
+  const targetPosition = await page.locator("#technology").evaluate((element) => ({
     top: element.getBoundingClientRect().top,
     bottom: element.getBoundingClientRect().bottom,
     scrollY: window.scrollY,
@@ -56,6 +57,7 @@ test("desktop CTA, modal state, focus loop, language, and console remain correct
 
   const modal = page.locator("[data-contact-modal]");
   const firstCta = page.locator("[data-contact-open]").nth(0);
+  await expect(firstCta).toContainText("Contact DeepRank");
   await firstCta.scrollIntoViewIfNeeded();
   await firstCta.focus();
   await page.keyboard.press("Enter");
@@ -87,6 +89,8 @@ test("desktop CTA, modal state, focus loop, language, and console remain correct
   await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
   await expect(page.locator("#contactModalTitle")).toHaveText("合作咨询");
   await expect(page.locator("[data-contact-submit] span")).toHaveText("提交咨询");
+  await expect(firstCta).toContainText("联系深序科技");
+  await expect(page.locator('.hero-cta[href="#technology"]')).toHaveAttribute("href", "#technology");
   await page.locator(".lang-toggle").evaluate((button) => button.click());
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 
@@ -99,17 +103,112 @@ test("desktop CTA, modal state, focus loop, language, and console remain correct
   await expect(page.locator(".hero")).not.toHaveAttribute("inert", "");
   await expect(page.locator(".page-flow")).not.toHaveAttribute("aria-hidden", "true");
 
-  const secondCta = page.locator("[data-contact-open]").nth(1);
-  await secondCta.focus();
-  await page.keyboard.press("Enter");
-  await expect(modal).toHaveClass(/is-open/);
-  await page.keyboard.press("Escape");
-  await page.waitForTimeout(200);
-  await expect(secondCta).toBeFocused();
-
   expect(await page.evaluate(() => window.__nonFiniteCanvasCalls)).toEqual([]);
   expect(requests.some((url) => url.endsWith("/favicon.svg"))).toBe(true);
   expect(requests.some((url) => url.endsWith("/favicon.ico"))).toBe(false);
+  expect(errors).toEqual([]);
+});
+
+test("confidential delivery stays separated at responsive breakpoints in both languages", async ({ page }) => {
+  const { errors } = await instrumentPage(page, { width: 920, height: 1000 });
+
+  for (const width of [641, 768, 900, 920]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.locator("#confidential-delivery").scrollIntoViewIfNeeded();
+
+    for (const language of ["en", "zh-CN"]) {
+      await page.locator(".lang-toggle").evaluate((button, expectedLanguage) => {
+        if (document.documentElement.lang !== expectedLanguage) button.click();
+      }, language);
+      await page.waitForTimeout(120);
+
+      const layout = await page.evaluate(() => {
+        const copy = document.querySelector(".confidential-copy").getBoundingClientRect();
+        const features = document.querySelector(".confidential-features").getBoundingClientRect();
+        const flow = document.querySelector(".confidential-flow").getBoundingClientRect();
+        const overlapWidth = Math.max(0, Math.min(copy.right, features.right) - Math.max(copy.left, features.left));
+        const overlapHeight = Math.max(0, Math.min(copy.bottom, features.bottom) - Math.max(copy.top, features.top));
+        return {
+          overlapArea: overlapWidth * overlapHeight,
+          flowTop: flow.top,
+          featuresBottom: features.bottom,
+          featuresPosition: getComputedStyle(document.querySelector(".confidential-features")).position,
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        };
+      });
+
+      expect(layout.overlapArea, `${width}px ${language} copy/features overlap`).toBe(0);
+      expect(layout.flowTop, `${width}px ${language} flow order`).toBeGreaterThanOrEqual(layout.featuresBottom - 0.5);
+      expect(layout.featuresPosition).toBe("relative");
+      expect(layout.overflow).toBeLessThanOrEqual(0);
+    }
+  }
+
+  expect(errors).toEqual([]);
+});
+
+test("mobile capabilities are bilingual while desktop coordinates retain the galaxy layout", async ({ page }) => {
+  const { errors } = await instrumentPage(page, { width: 390, height: 844 });
+  const points = page.locator(".coordinate-point");
+  await expect(points).toHaveCount(6);
+
+  for (const [language, primary, secondary] of [
+    ["en", ["UMI Capture", "Ego-view Capture", "Cleaning", "QA", "Annotation", "Delivery"], ["夹抓采集", "第一视角采集", "数据清洗", "质量检测", "数据标注", "成品交付"]],
+    ["zh-CN", ["夹抓采集", "第一视角采集", "数据清洗", "质量检测", "数据标注", "成品交付"], ["UMI Capture", "Ego-view Capture", "Cleaning", "QA", "Annotation", "Delivery"]],
+  ]) {
+    await page.locator(".lang-toggle").evaluate((button, expectedLanguage) => {
+      if (document.documentElement.lang !== expectedLanguage) button.click();
+    }, language);
+    await page.waitForTimeout(60);
+
+    await expect(page.locator(".coordinate-point__label")).toHaveText(primary);
+    await expect(page.locator(".coordinate-point__zh")).toHaveText(secondary);
+    const mobileLayout = await points.evaluateAll((elements) =>
+      elements.map((element) => {
+        const box = element.getBoundingClientRect();
+        const label = element.querySelector(".coordinate-point__label");
+        const secondaryLabel = element.querySelector(".coordinate-point__zh");
+        return {
+          box: { left: box.left, right: box.right, height: box.height },
+          labelVisible: getComputedStyle(label).display !== "none" && label.textContent.trim().length > 0,
+          secondaryVisible: getComputedStyle(secondaryLabel).display !== "none" && secondaryLabel.textContent.trim().length > 0,
+        };
+      }),
+    );
+    expect(mobileLayout.every(({ box, labelVisible, secondaryVisible }) => box.left >= 0 && box.right <= 390.5 && box.height >= 44 && labelVisible && secondaryVisible)).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
+  }
+
+  await points.first().focus();
+  await expect(points.first()).toBeFocused();
+  await expect(points.first()).toHaveCSS("outline-style", "solid");
+
+  await page.setViewportSize({ width: 1280, height: 720 });
+  await page.waitForTimeout(120);
+  const desktopLayout = await points.evaluateAll((elements) =>
+    elements.map((element) => ({
+      position: getComputedStyle(element).position,
+      lineDisplay: getComputedStyle(element.querySelector(".coordinate-point__line")).display,
+      textDisplay: getComputedStyle(element.querySelector(".coordinate-point__text")).display,
+      secondaryDisplay: getComputedStyle(element.querySelector(".coordinate-point__zh")).display,
+    })),
+  );
+  expect(desktopLayout.every(({ position, lineDisplay, textDisplay, secondaryDisplay }) => position === "absolute" && lineDisplay !== "none" && textDisplay !== "none" && secondaryDisplay === "none")).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test("reduced motion leaves content visible and canvas idle", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  const { errors } = await instrumentPage(page, { width: 390, height: 844 });
+
+  await expect.poll(() => page.evaluate(() => window.__deepRankGalaxy?.canvasReady)).toBe(true);
+  expect(await page.evaluate(() => window.__deepRankGalaxy.running)).toBe(false);
+  const reveal = await page.locator(".reveal").first().evaluate((element) => {
+    const style = getComputedStyle(element);
+    return { opacity: style.opacity, transform: style.transform };
+  });
+  expect(reveal).toEqual({ opacity: "1", transform: "none" });
+  expect(await page.evaluate(() => window.__nonFiniteCanvasCalls)).toEqual([]);
   expect(errors).toEqual([]);
 });
 

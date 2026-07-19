@@ -3,6 +3,10 @@
   --ink: #eef3f6;
   --muted: #7d8fa2;
   --soft: #b8c8d5;
+  --font-sans-en: "Helvetica Neue", Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans-cn: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
   --mx: 0;
   --my: 0;
 }
@@ -24,22 +28,16 @@ body {
   font-size: 16px;
   line-height: 1.7;
   letter-spacing: 0.01em;
-  font-family:
-    Inter, "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans-en);
 }
 
 body.is-en {
-  font-family:
-    Inter, "Helvetica Neue", Arial, ui-sans-serif, system-ui, -apple-system,
-    BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans-en);
 }
 
 body.is-cn {
   line-height: 1.82;
-  font-family:
-    "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
-    ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans-cn);
 }
 
 a {
@@ -381,7 +379,7 @@ body.is-cn .confidential-copy h2 {
   margin: 0;
   color: rgba(244, 247, 249, 0.93);
   font-size: 72px;
-  font-weight: 200;
+  font-weight: var(--font-weight-light);
   line-height: 1.13;
   letter-spacing: 0;
 }
@@ -448,6 +446,11 @@ body.is-cn .confidential-copy h2 {
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.036),
     0 18px 48px rgba(255, 255, 255, 0.035);
+}
+
+.hero-cta:focus-visible {
+  outline: 2px solid rgba(238, 243, 246, 0.72);
+  outline-offset: 3px;
 }
 
 .hero-cta:hover::after {
@@ -561,6 +564,7 @@ body.is-cn .confidential-copy h2 {
 }
 
 .coordinate-point__zh {
+  display: none;
   margin-top: 1px;
   color: rgba(184, 200, 213, 0.38);
   font-size: 10px;
@@ -764,7 +768,7 @@ body.is-cn .confidential-copy h2 {
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
   font-size: 46px;
-  font-weight: 240;
+  font-weight: var(--font-weight-light);
   line-height: 1.18;
   letter-spacing: 0;
 }
@@ -1073,7 +1077,7 @@ html.js .reveal.is-visible {
   margin: 0;
   color: rgba(255, 255, 255, 0.9);
   font-size: clamp(42px, 5vw, 76px);
-  font-weight: 220;
+  font-weight: var(--font-weight-light);
   line-height: 1.08;
   letter-spacing: 0;
 }
@@ -1422,7 +1426,7 @@ html.js .reveal.is-visible {
   margin: 0;
   color: rgba(255, 255, 255, 0.88);
   font-size: clamp(38px, 4.35vw, 58px);
-  font-weight: 220;
+  font-weight: var(--font-weight-light);
   line-height: 1.12;
   letter-spacing: 0;
 }
@@ -1496,7 +1500,7 @@ html.js .reveal.is-visible {
   margin: 0;
   color: rgba(255, 255, 255, 0.86);
   font-size: 24px;
-  font-weight: 260;
+  font-weight: var(--font-weight-light);
   letter-spacing: 0;
 }
 
@@ -1709,7 +1713,7 @@ html.js .reveal.is-visible {
   margin: 0;
   color: rgba(255, 255, 255, 0.88);
   font-size: clamp(40px, 4.5vw, 62px);
-  font-weight: 220;
+  font-weight: var(--font-weight-light);
   line-height: 1.12;
   letter-spacing: 0;
 }
@@ -2196,7 +2200,7 @@ html.js .reveal.is-visible {
   margin: 0;
   color: rgba(255, 255, 255, 0.88);
   font-size: clamp(40px, 4.4vw, 62px);
-  font-weight: 220;
+  font-weight: var(--font-weight-light);
   line-height: 1.12;
   letter-spacing: 0;
 }
@@ -2444,7 +2448,7 @@ html.js .reveal.is-visible {
   max-width: 12em;
   color: rgba(255, 255, 255, 0.9);
   font-size: clamp(42px, 4.6vw, 66px);
-  font-weight: 220;
+  font-weight: var(--font-weight-light);
   line-height: 1.12;
 }
 
@@ -2471,10 +2475,6 @@ html.js .reveal.is-visible {
 .final-button {
   background: rgba(5, 10, 18, 0.24);
   backdrop-filter: blur(9px);
-}
-
-.final-button--quiet {
-  color: rgba(202, 215, 227, 0.68);
 }
 
 .hero-cta--quiet {
@@ -2646,7 +2646,7 @@ body.has-contact-modal {
   margin: 0;
   color: rgba(255, 255, 255, 0.92);
   font-size: 30px;
-  font-weight: 260;
+  font-weight: var(--font-weight-light);
   line-height: 1.18;
 }
 
@@ -3294,8 +3294,10 @@ body.has-contact-modal {
   }
 
   .confidential-section {
-    min-height: 980px;
     height: auto;
+    min-height: auto;
+    display: flex;
+    flex-direction: column;
     padding: 38px 24px 42px;
   }
 
@@ -3313,15 +3315,22 @@ body.has-contact-modal {
   }
 
   .confidential-features {
-    top: 270px;
-    right: 24px;
-    width: min(390px, calc(100vw - 48px));
+    position: relative;
+    inset: auto;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  .confidential-feature:last-child {
+    grid-column: 1 / -1;
   }
 
   .confidential-flow {
-    left: 24px;
-    right: 24px;
-    bottom: 34px;
+    position: relative;
+    inset: auto;
+    width: 100%;
+    margin-top: 32px;
     border-radius: 16px;
     flex-wrap: wrap;
   }
@@ -3403,9 +3412,12 @@ body.has-contact-modal {
   }
 
   .hero__content {
+    min-height: auto;
     width: calc(100vw - 36px);
     margin-left: 18px;
-    padding-bottom: 44px;
+    justify-content: flex-start;
+    padding-top: clamp(190px, 32vh, 270px);
+    padding-bottom: 0;
   }
 
   .hero__kicker {
@@ -3442,14 +3454,86 @@ body.has-contact-modal {
     justify-content: center;
   }
 
-  .coordinate-point__text,
-  .coordinate-point__line {
-    display: none;
+  .coordinate-layer {
+    position: relative;
+    inset: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: calc(100% - 36px);
+    margin: 24px 18px 44px;
+    gap: 8px;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+    transform-style: flat;
   }
 
   .coordinate-point {
-    width: 22px;
-    min-height: 22px;
+    position: relative;
+    left: auto;
+    top: auto;
+    display: flex;
+    width: auto;
+    min-height: 52px;
+    border: 1px solid rgba(238, 243, 246, 0.13);
+    border-radius: 10px;
+    padding: 9px 10px;
+    align-items: center;
+    gap: 10px;
+    color: rgba(238, 243, 246, 0.78);
+    background: rgba(5, 10, 18, 0.42);
+    opacity: 0.82;
+    transform: none;
+    backdrop-filter: blur(8px);
+  }
+
+  .coordinate-point:focus-visible {
+    outline: 2px solid rgba(238, 243, 246, 0.72);
+    outline-offset: 2px;
+  }
+
+  .coordinate-point__dot {
+    position: relative;
+    left: auto;
+    top: auto;
+    flex: 0 0 auto;
+  }
+
+  .coordinate-point__text {
+    position: relative;
+    left: auto;
+    top: auto;
+    display: block;
+    min-width: 0;
+    color: inherit;
+    line-height: 1.35;
+    white-space: normal;
+    transform: none;
+  }
+
+  .coordinate-point:hover .coordinate-point__text,
+  .coordinate-point.is-active .coordinate-point__text {
+    transform: none;
+  }
+
+  .coordinate-point__line,
+  .coordinate-point__code,
+  .coordinate-point__note {
+    display: none;
+  }
+
+  .coordinate-point__label {
+    margin: 0;
+    color: rgba(238, 243, 246, 0.88);
+    font-size: 12px;
+    font-weight: var(--font-weight-regular);
+  }
+
+  .coordinate-point__zh {
+    display: block;
+    margin-top: 3px;
+    color: rgba(184, 200, 213, 0.68);
+    font-size: 10px;
   }
 
   .scroll-cue {
@@ -3707,7 +3791,7 @@ body.has-contact-modal {
   }
 
   .confidential-section {
-    min-height: 1080px;
+    min-height: auto;
     padding: 30px 18px 28px;
   }
 
@@ -3739,11 +3823,15 @@ body.has-contact-modal {
   }
 
   .confidential-features {
-    left: 18px;
-    right: 18px;
-    top: 438px;
-    width: auto;
+    inset: auto;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    margin-top: 24px;
     gap: 8px;
+  }
+
+  .confidential-feature:last-child {
+    grid-column: auto;
   }
 
   .confidential-feature {
@@ -3762,11 +3850,11 @@ body.has-contact-modal {
   }
 
   .confidential-flow {
-    left: 14px;
-    right: 14px;
-    bottom: 18px;
+    inset: auto;
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
+    width: 100%;
+    margin-top: 24px;
     gap: 6px;
     border-radius: 14px;
     padding: 10px 9px;

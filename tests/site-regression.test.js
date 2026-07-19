@@ -5,12 +5,50 @@ const vm = require("node:vm");
 
 const html = fs.readFileSync("index.html", "utf8");
 const script = fs.readFileSync("script.js", "utf8");
+const styles = fs.readFileSync("styles.css", "utf8");
 
 test("hero CTA and navigation point to real sections", () => {
-  assert.match(html, /<a class="hero-cta" href="#capture-systems">/);
+  assert.match(html, /<a class="hero-cta" href="#technology">/);
   assert.match(html, /id="technology"/);
   assert.match(html, /id="capture-systems"/);
   assert.match(html, /id="final-cta"/);
+});
+
+test("homepage polish keeps one contact CTA and bilingual capability labels", () => {
+  assert.equal((html.match(/data-contact-open/g) || []).length, 1);
+  assert.doesNotMatch(html, /final\.secondaryCta/);
+  assert.doesNotMatch(script, /secondaryCta/);
+
+  for (const [english, chinese] of [
+    ["UMI Capture", "夹抓采集"],
+    ["Ego-view Capture", "第一视角采集"],
+    ["Cleaning", "数据清洗"],
+    ["QA", "质量检测"],
+    ["Annotation", "数据标注"],
+    ["Delivery", "成品交付"],
+  ]) {
+    assert.match(script, new RegExp(`label: "${english}", zh: "${chinese}"`));
+    assert.match(script, new RegExp(`label: "${chinese}", zh: "${english}"`));
+  }
+});
+
+test("typography uses local system stacks and standard weights", () => {
+  assert.match(styles, /--font-sans-en:/);
+  assert.match(styles, /--font-sans-cn:/);
+  assert.match(styles, /--font-weight-light: 300/);
+  assert.match(styles, /--font-weight-regular: 400/);
+  assert.doesNotMatch(styles, /\bInter\b|Noto Sans SC/);
+  assert.doesNotMatch(styles, /@font-face|@import\s+url/);
+  assert.doesNotMatch(styles, /font-weight:\s*(?:200|220|240|260)\b/);
+});
+
+test("responsive polish uses document flow and readable mobile coordinates", () => {
+  assert.match(styles, /@media \(max-width: 920px\)[\s\S]*?\.confidential-features\s*{[\s\S]*?position: relative;[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(styles, /@media \(max-width: 920px\)[\s\S]*?\.confidential-flow\s*{[\s\S]*?position: relative;[\s\S]*?inset: auto/);
+  assert.match(styles, /@media \(max-width: 640px\)[\s\S]*?\.coordinate-layer\s*{[\s\S]*?grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(styles, /@media \(max-width: 640px\)[\s\S]*?\.coordinate-point__zh\s*{[\s\S]*?display: block/);
+  assert.match(styles, /\.hero-cta:focus-visible/);
+  assert.match(styles, /\.coordinate-point:focus-visible/);
 });
 
 test("contact and footer copy stay within the active language", () => {
