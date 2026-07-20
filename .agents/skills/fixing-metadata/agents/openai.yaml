@@ -1,0 +1,7 @@
+interface:
+  display_name: "Fixing Metadata"
+  short_description: "Audit and fix website metadata"
+  default_prompt: "Use $fixing-metadata to audit and fix the current page metadata without unrelated changes."
+
+policy:
+  allow_implicit_invocation: false

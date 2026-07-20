@@ -1,0 +1,7 @@
+interface:
+  display_name: "Fixing Motion Performance"
+  short_description: "Audit and fix animation performance"
+  default_prompt: "Use $fixing-motion-performance to audit and fix animation performance within the existing stack."
+
+policy:
+  allow_implicit_invocation: false

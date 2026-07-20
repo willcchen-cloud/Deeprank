@@ -1,0 +1,7 @@
+interface:
+  display_name: "Fixing Accessibility"
+  short_description: "Audit and fix accessibility issues"
+  default_prompt: "Use $fixing-accessibility to audit and fix accessibility issues with minimal, targeted changes."
+
+policy:
+  allow_implicit_invocation: false

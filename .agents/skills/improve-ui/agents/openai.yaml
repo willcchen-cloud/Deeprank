@@ -1,0 +1,7 @@
+interface:
+  display_name: "Improve UI"
+  short_description: "Audit UI and prepare implementation plans"
+  default_prompt: "Use $improve-ui to audit the selected product surface and recommend evidence-based improvements without modifying product source."
+
+policy:
+  allow_implicit_invocation: false

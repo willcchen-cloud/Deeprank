@@ -8,6 +8,7 @@
       name="description"
       content="DeepRank Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision."
     />
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -41,7 +42,26 @@
           </span>
         </a>
 
-        <nav class="site-nav" aria-label="Main navigation">
+        <button
+          class="mobile-menu-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="siteNavigation"
+          aria-label="Open navigation menu"
+          data-mobile-menu-toggle
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <nav
+          class="site-nav"
+          id="siteNavigation"
+          aria-label="Main navigation"
+          data-i18n-aria-label="nav.label"
+          data-mobile-menu
+        >
           <a href="#technology" data-i18n="nav.technology">TECHNOLOGY</a>
           <a href="#capture-systems" data-i18n="nav.services">SERVICES</a>
           <a href="#final-cta" data-i18n="nav.contact">CONTACT</a>
@@ -56,7 +76,7 @@
         <p class="hero__summary" data-i18n="hero.body">
           DeepRank Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision.
         </p>
-        <a class="hero-cta" href="#hero">
+        <a class="hero-cta" href="#technology">
           <span data-i18n="hero.cta">Enter the Data Universe</span>
           <span class="hero-cta__arrow" aria-hidden="true">→</span>
         </a>
@@ -438,12 +458,14 @@
             If you are building robotics, embodied intelligence, multimodal models, autonomous driving, or industrial vision systems, DeepRank can support your data workflow from collection and cleaning to annotation, quality inspection, and secure delivery.
           </p>
           <div class="final-actions">
-            <button class="hero-cta final-button" type="button" data-contact-open>
+            <button
+              class="hero-cta final-button"
+              type="button"
+              aria-haspopup="dialog"
+              aria-controls="contactModal"
+              data-contact-open
+            >
               <span data-i18n="final.primaryCta">Contact DeepRank</span>
-              <span class="hero-cta__arrow" aria-hidden="true">→</span>
-            </button>
-            <button class="hero-cta final-button final-button--quiet" type="button" data-contact-open>
-              <span data-i18n="final.secondaryCta">Discuss a Data Project</span>
               <span class="hero-cta__arrow" aria-hidden="true">→</span>
             </button>
           </div>
@@ -467,29 +489,37 @@
 
     </div>
 
-    <div class="contact-modal" data-contact-modal hidden>
+    <div
+      class="contact-modal"
+      id="contactModal"
+      data-contact-modal
+      aria-hidden="true"
+      inert
+      hidden
+    >
       <div class="contact-modal__backdrop" data-contact-close></div>
       <section
         class="contact-modal__panel"
         role="dialog"
         aria-modal="true"
         aria-labelledby="contactModalTitle"
+        tabindex="-1"
       >
         <button
           class="contact-modal__close"
           type="button"
           data-contact-close
-          aria-label="关闭合作咨询"
+          aria-label="Close contact form"
           data-i18n-aria-label="contact.close"
         >
           ×
         </button>
-        <p class="contact-modal__kicker">DeepRank Contact</p>
-        <h2 id="contactModalTitle" data-i18n="contact.title">合作咨询</h2>
+        <p class="contact-modal__kicker" data-i18n="contact.kicker">DeepRank Contact</p>
+        <h2 id="contactModalTitle" data-i18n="contact.title">Partnership Inquiry</h2>
 
         <form class="contact-form" data-contact-form novalidate>
           <label class="contact-field">
-            <span data-i18n="contact.email">邮箱</span>
+            <span data-i18n="contact.email">Email</span>
             <input
               type="email"
               name="email"
@@ -501,36 +531,36 @@
           </label>
 
           <label class="contact-field">
-            <span data-i18n="contact.nameCompany">姓名 / 公司</span>
+            <span data-i18n="contact.nameCompany">Name / Company</span>
             <input
               type="text"
               name="name_company"
               autocomplete="organization"
               data-i18n-placeholder="contact.nameCompanyPlaceholder"
-              placeholder="姓名或公司名称"
+              placeholder="Name or company name"
             />
           </label>
 
           <label class="contact-field">
-            <span data-i18n="contact.projectType">项目类型</span>
+            <span data-i18n="contact.projectType">Project Type</span>
             <select name="project_type" required>
-              <option value="" data-i18n="contact.projectPlaceholder">请选择项目类型</option>
-              <option value="数据采集" data-i18n="contact.projectOptions.collection">数据采集</option>
-              <option value="视频清洗" data-i18n="contact.projectOptions.videoCleaning">视频清洗</option>
-              <option value="数据标注" data-i18n="contact.projectOptions.annotation">数据标注</option>
-              <option value="质量审核" data-i18n="contact.projectOptions.quality">质量审核</option>
-              <option value="其他" data-i18n="contact.projectOptions.other">其他</option>
+              <option value="" data-i18n="contact.projectPlaceholder">Select a project type</option>
+              <option value="数据采集" data-i18n="contact.projectOptions.collection">Data Collection</option>
+              <option value="视频清洗" data-i18n="contact.projectOptions.videoCleaning">Video Cleaning</option>
+              <option value="数据标注" data-i18n="contact.projectOptions.annotation">Data Annotation</option>
+              <option value="质量审核" data-i18n="contact.projectOptions.quality">Quality Review</option>
+              <option value="其他" data-i18n="contact.projectOptions.other">Other</option>
             </select>
           </label>
 
           <label class="contact-field">
-            <span data-i18n="contact.message">需求描述</span>
+            <span data-i18n="contact.message">Requirements</span>
             <textarea
               name="message"
               rows="5"
               required
               data-i18n-placeholder="contact.messagePlaceholder"
-              placeholder="请简单描述你的数据需求、规模、交付时间或当前阶段"
+              placeholder="Describe your data needs, scale, delivery timeline, or current stage"
             ></textarea>
           </label>
 
@@ -538,10 +568,10 @@
 
           <div class="contact-form__actions">
             <button class="contact-form__button contact-form__button--quiet" type="button" data-contact-close>
-              <span data-i18n="contact.cancel">取消</span>
+              <span data-i18n="contact.cancel">Cancel</span>
             </button>
             <button class="contact-form__button" type="submit" data-contact-submit>
-              <span data-i18n="contact.submit">提交咨询</span>
+              <span data-i18n="contact.submit">Submit Inquiry</span>
             </button>
           </div>
         </form>
