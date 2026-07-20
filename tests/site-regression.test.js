@@ -32,6 +32,56 @@ test("homepage polish keeps one contact CTA and bilingual capability labels", ()
   }
 });
 
+test("landmark labels and the confidential heading follow the active language", () => {
+  for (const path of [
+    "brand.home",
+    "hero.sectionLabel",
+    "hero.coordinatesLabel",
+    "pipeline.label",
+    "quality.label",
+    "quality.statusLabel",
+    "confidential.featuresLabel",
+    "confidential.flowLabel",
+    "final.servicesLabel",
+  ]) {
+    assert.ok(html.includes(`data-i18n-aria-label="${path}"`), `missing localized aria-label binding for ${path}`);
+  }
+
+  for (const path of ["hero.coordinatesLabel", "quality.label", "quality.statusLabel", "confidential.featuresLabel"]) {
+    const escapedPath = path.replace(".", "\\.");
+    assert.match(
+      html,
+      new RegExp(`role="group"[^>]*data-i18n-aria-label="${escapedPath}"`),
+      `localized group label is not exposed for ${path}`,
+    );
+  }
+
+  for (const label of [
+    "DeepRank homepage",
+    "DeepRank homepage introduction",
+    "DeepRank data production capabilities",
+    "Data production workflow",
+    "Quality control system",
+    "Delivery status",
+    "Confidential delivery controls",
+    "Secure delivery flow",
+    "DeepRank services",
+    "深序科技首页",
+    "深序科技首页介绍",
+    "深序科技数据生产能力",
+    "数据生产流程",
+    "质量控制体系",
+    "交付状态",
+    "保密交付控制措施",
+    "安全交付流程",
+    "深序科技服务范围",
+  ]) {
+    assert.ok(script.includes(`"${label}"`), `missing localized aria-label value: ${label}`);
+  }
+
+  assert.ok(script.includes('title: "为保密数据\\n流程而设计"'));
+});
+
 test("typography uses local system stacks and standard weights", () => {
   assert.match(styles, /--font-sans-en:/);
   assert.match(styles, /--font-sans-cn:/);

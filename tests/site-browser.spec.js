@@ -41,6 +41,34 @@ async function expectMenuClosed(page) {
 test("desktop CTA, modal state, focus loop, language, and console remain correct", async ({ page }) => {
   const { errors, requests } = await instrumentPage(page, { width: 1280, height: 720 });
 
+  for (const [path, label] of [
+    ["brand.home", "DeepRank homepage"],
+    ["hero.sectionLabel", "DeepRank homepage introduction"],
+    ["hero.coordinatesLabel", "DeepRank data production capabilities"],
+    ["pipeline.label", "Data production workflow"],
+    ["quality.label", "Quality control system"],
+    ["quality.statusLabel", "Delivery status"],
+    ["confidential.featuresLabel", "Confidential delivery controls"],
+    ["confidential.flowLabel", "Secure delivery flow"],
+    ["final.servicesLabel", "DeepRank services"],
+  ]) {
+    await expect(page.locator(`[data-i18n-aria-label="${path}"]`)).toHaveAttribute("aria-label", label);
+  }
+  for (const label of [
+    "DeepRank data production capabilities",
+    "Quality control system",
+    "Delivery status",
+    "Confidential delivery controls",
+  ]) {
+    await expect(page.getByRole("group", { name: label })).toHaveCount(1);
+  }
+  await page.locator(".lang-toggle").click();
+  for (const label of ["深序科技数据生产能力", "质量控制体系", "交付状态", "保密交付控制措施"]) {
+    await expect(page.getByRole("group", { name: label })).toHaveCount(1);
+  }
+  await page.locator(".lang-toggle").click();
+  await expect(page.locator("html")).toHaveAttribute("lang", "en");
+
   await expect(page.locator("[data-contact-open]")).toHaveCount(1);
   await page.locator('.hero-cta[href="#technology"]').click();
   await expect(page).toHaveURL(/#technology$/);
@@ -91,6 +119,23 @@ test("desktop CTA, modal state, focus loop, language, and console remain correct
   await expect(page.locator("[data-contact-submit] span")).toHaveText("提交咨询");
   await expect(firstCta).toContainText("联系深序科技");
   await expect(page.locator('.hero-cta[href="#technology"]')).toHaveAttribute("href", "#technology");
+  for (const [path, label] of [
+    ["brand.home", "深序科技首页"],
+    ["hero.sectionLabel", "深序科技首页介绍"],
+    ["hero.coordinatesLabel", "深序科技数据生产能力"],
+    ["pipeline.label", "数据生产流程"],
+    ["quality.label", "质量控制体系"],
+    ["quality.statusLabel", "交付状态"],
+    ["confidential.featuresLabel", "保密交付控制措施"],
+    ["confidential.flowLabel", "安全交付流程"],
+    ["final.servicesLabel", "深序科技服务范围"],
+  ]) {
+    await expect(page.locator(`[data-i18n-aria-label="${path}"]`)).toHaveAttribute("aria-label", label);
+  }
+  expect(await page.locator("#confidential-delivery h2").evaluate((element) => element.innerText.split("\n"))).toEqual([
+    "为保密数据",
+    "流程而设计",
+  ]);
   await page.locator(".lang-toggle").evaluate((button) => button.click());
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 

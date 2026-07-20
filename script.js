@@ -48,6 +48,7 @@
       brand: {
         name: "DeepRank",
         sub: "DeepRank Tech",
+        home: "DeepRank homepage",
       },
       nav: {
         about: "ABOUT",
@@ -64,6 +65,8 @@
         subtitle: "Reliable data infrastructure for AI",
         body: "DeepRank Tech provides high-quality data collection, annotation, quality inspection, and secure delivery services for autonomous driving, robotics, multimodal AI, and industrial vision.",
         cta: "Enter the Data Universe",
+        sectionLabel: "DeepRank homepage introduction",
+        coordinatesLabel: "DeepRank data production capabilities",
       },
       heroNodes: {
         umi: { label: "UMI Capture", zh: "夹抓采集", note: "Stable grasp trajectory capture" },
@@ -78,6 +81,7 @@
         title: "From Raw Capture\nto Deliverable Dataset",
         subtitle: "An integrated production workflow from task definition to validated dataset delivery.",
         body: "Standardized workflows, quality gates, and multi-stage validation keep every dataset ready for high-quality delivery.",
+        label: "Data production workflow",
         nodes: {
           task: { title: "Task Definition", sub: "", note: "Define goals, scenes, standards, and delivery format." },
           protocol: { title: "Capture Protocol", sub: "", note: "Design SOPs, device settings, capture actions, and sampling checks." },
@@ -133,6 +137,8 @@
         sectionLabel: "04 — QUALITY LAYER",
         title: "Quality Before Scale",
         subtitle: "SOP, sampling, review, and feedback loops for stable data delivery.",
+        label: "Quality control system",
+        statusLabel: "Delivery status",
         nodes: [
           "01 SOP Defined",
           "02 Sampling Enabled",
@@ -149,6 +155,8 @@
         title: "Built for Confidential\nData Workflows",
         subtitle: "Verifiable delivery workflows without exposing sensitive client data.",
         body: "Client datasets and project outputs are often protected by confidentiality agreements. DeepRank does not display sensitive client work publicly. Instead, we make delivery quality verifiable through standardized workflows, task-level SOPs, quality records, delivery checklists, and permission-controlled handoff.",
+        featuresLabel: "Confidential delivery controls",
+        flowLabel: "Secure delivery flow",
         features: [
           { title: "Encryption", body: "Data protection during storage, transfer, and delivery." },
           { title: "Access Control", body: "Role-based project permissions and controlled data access." },
@@ -164,6 +172,7 @@
         subtitle: "Bring high-quality data production into a controlled, verifiable workflow.",
         body: "If you are building robotics, embodied intelligence, multimodal models, autonomous driving, or industrial vision systems, DeepRank can support your data workflow from collection and cleaning to annotation, quality inspection, and secure delivery.",
         primaryCta: "Contact DeepRank",
+        servicesLabel: "DeepRank services",
         keywords: ["Data Collection", "Annotation", "Quality Inspection", "Secure Delivery"],
         footerBrand: "DeepRank Tech",
         footerServices: "Data Collection · Annotation · Quality Inspection · Secure Delivery",
@@ -208,6 +217,7 @@
       brand: {
         name: "深序科技",
         sub: "DeepRank Tech",
+        home: "深序科技首页",
       },
       nav: {
         about: "关于我们",
@@ -224,6 +234,8 @@
         subtitle: "面向智能系统的高质量数据生产能力",
         body: "深序科技为智能驾驶、机器人、多模态 AI 与工业视觉提供高质量数据采集、标注、质检与安全交付服务。",
         cta: "进入数据宇宙",
+        sectionLabel: "深序科技首页介绍",
+        coordinatesLabel: "深序科技数据生产能力",
       },
       heroNodes: {
         umi: { label: "夹抓采集", zh: "UMI Capture", note: "稳定记录夹抓轨迹与操作片段" },
@@ -238,6 +250,7 @@
         title: "从原始采集\n到可交付数据集",
         subtitle: "从任务定义到成品交付的一体化数据生产流程。",
         body: "通过标准化流程、质量控制与多轮校验，确保每一份数据集都符合高质量交付要求。",
+        label: "数据生产流程",
         nodes: {
           task: { title: "任务定义", sub: "", note: "明确目标、场景、标准与交付格式。" },
           protocol: { title: "采集方案设计", sub: "", note: "设计 SOP、设备配置、采集动作与抽检方式。" },
@@ -293,14 +306,18 @@
         sectionLabel: "04 — 质量控制体系",
         title: "质量先于规模",
         subtitle: "通过 SOP、抽检、复核与异常回流构建稳定交付质量。",
+        label: "质量控制体系",
+        statusLabel: "交付状态",
         nodes: ["01 SOP 已定义", "02 过程抽检", "03 数据清洗", "04 多轮复核", "05 一致性检查", "06 异常回流", "07 交付就绪"],
         status: ["交付就绪", "验收完成", "复核通过"],
       },
       confidential: {
         sectionLabel: "05 — 保密与安全交付",
-        title: "为保密数据流程而设计",
+        title: "为保密数据\n流程而设计",
         subtitle: "在不展示敏感客户数据的前提下，建立可验证、可追踪、可验收的交付流程。",
         body: "客户数据和项目成果通常受到保密协议保护，深序科技不会在官网展示真实客户数据、成品样例或项目细节。我们通过标准化流程、任务级 SOP、质检记录、交付清单和权限控制，让客户在不暴露敏感数据的前提下确认交付质量。",
+        featuresLabel: "保密交付控制措施",
+        flowLabel: "安全交付流程",
         features: [
           { title: "加密保护", body: "覆盖存储、传输与交付环节的数据保护。" },
           { title: "权限控制", body: "按角色和项目范围管理数据访问权限。" },
@@ -316,6 +333,7 @@
         subtitle: "让高质量数据生产进入可控、可验证、可交付的流程。",
         body: "如果你正在构建机器人、具身智能、多模态模型、智能驾驶或工业视觉系统，深序科技可以为你提供从采集、清洗、标注到质检交付的一体化数据生产支持。",
         primaryCta: "联系深序科技",
+        servicesLabel: "深序科技服务范围",
         keywords: ["数据采集", "数据标注", "质量检测", "安全交付"],
         footerBrand: "深序科技有限公司",
         footerServices: "数据采集 · 数据标注 · 质量检测 · 安全交付",
