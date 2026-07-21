@@ -19,6 +19,25 @@ function json(statusCode, body) {
   };
 }
 
+function logServerError(event, context, error) {
+  const method = ["GET", "POST", "PATCH"].includes(event?.httpMethod) ? event.httpMethod : "UNKNOWN";
+  const errorName =
+    typeof error?.name === "string" && /^[A-Za-z][A-Za-z0-9_.-]{0,63}$/.test(error.name)
+      ? error.name
+      : "Error";
+  const requestId =
+    typeof context?.awsRequestId === "string" && /^[A-Za-z0-9-]{1,128}$/.test(context.awsRequestId)
+      ? context.awsRequestId
+      : undefined;
+
+  console.error("contact-leads request failed", {
+    method,
+    errorName,
+    statusCode: 500,
+    ...(requestId ? { requestId } : {}),
+  });
+}
+
 function getPool() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) {
@@ -74,6 +93,7 @@ function readJsonBody(event) {
   } catch (error) {
     const parseError = new Error("Invalid JSON body.");
     parseError.statusCode = 400;
+    parseError.expose = true;
     throw parseError;
   }
 }
@@ -122,6 +142,7 @@ function requireAdmin(event) {
   if (!token || !secureCompare(token, expectedToken)) {
     const error = new Error("Unauthorized.");
     error.statusCode = 401;
+    error.expose = true;
     throw error;
   }
 }
@@ -215,21 +236,26 @@ async function updateLead(event) {
   return json(200, { ok: true, lead: result.rows[0] });
 }
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
   if (event.httpMethod === "OPTIONS") {
     return { statusCode: 204, headers: { "Cache-Control": "no-store" }, body: "" };
   }
 
   try {
-    if (event.httpMethod === "POST") return createLead(event);
-    if (event.httpMethod === "GET") return listLeads(event);
-    if (event.httpMethod === "PATCH") return updateLead(event);
+    if (event.httpMethod === "POST") return await createLead(event);
+    if (event.httpMethod === "GET") return await listLeads(event);
+    if (event.httpMethod === "PATCH") return await updateLead(event);
 
     return json(405, { error: "Method not allowed." });
   } catch (error) {
-    const statusCode = error.statusCode || 500;
-    return json(statusCode, {
-      error: statusCode === 500 ? "Server error." : error.message,
-    });
+    const isClientError =
+      error?.expose === true &&
+      Number.isInteger(error.statusCode) &&
+      error.statusCode >= 400 &&
+      error.statusCode < 500;
+    if (isClientError) return json(error.statusCode, { error: error.message });
+
+    logServerError(event, context, error);
+    return json(500, { error: "Server error." });
   }
 };
